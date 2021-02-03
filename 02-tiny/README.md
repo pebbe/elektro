@@ -13,7 +13,7 @@ IDE van Arduino zit hiervoor bij de voorbeelden een kant-en-klare
 sketch `ArduinoISP`. Gewoon alles aansluiten volgens de
 documentatie... wat toch niet vanzelf ging.
 
-Je wordt aangeraden om de Arduino met de Tiny te verbinden vanaf de
+Je wordt aangeraden om de Arduino met de tiny te verbinden vanaf de
 zes ICSP/SPI-pinnen, die je op de Nano rechts ziet. Ik had wel een datasheet
 van de Nano, waarin ook de zes ICSP/SPI-pinnen staan vermeld in een schema, maar ik had
 niet door dat dat schema de onderkant van de Nano weergeeft. Ik keek
@@ -47,7 +47,7 @@ Daarna, ook onder `Hulpmiddelen` kies je `Bootloader branden`.
 Hier ging het bij mij eerst mis. Ik kreeg de gevreesde *Device signature = 0x000000
 Yikes!  Invalid device signature*, het signaal dat je iets verkeerd
 hebt aangesloten. Eenmaal opgelost kun je een sketch uploaden vanuit
-de Arduino IDE naar de Tiny, precies zoals je anders een sketch naar
+de Arduino IDE naar de tiny, precies zoals je anders een sketch naar
 een Arduino stuurt.
 
 Als je klaar bent, en de IDE weer wilt gebruiken om een Arduino te

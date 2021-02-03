@@ -35,7 +35,7 @@ volgens de diverse video's hierover die op Youtube zijn te vinden.
 
 Dan, in de Arduino IDE moet je de
 [ATtiny Core](https://github.com/SpenceKonde/ATTinyCore) installeren.
-Vervolgens onder `Hulpmiddelen` de volgens settings kiezen:
+Vervolgens onder `Hulpmiddelen` de volgens instellingen kiezen:
 
  * Board: ATtiny25/45/85 (No bootloader)
  * Chip: ATtiny85
@@ -51,7 +51,7 @@ de Arduino IDE naar de Tiny, precies zoals je anders een sketch naar
 een Arduino stuurt.
 
 Als je klaar bent, en de IDE weer wilt gebruiken om een Arduino te
-programmeren, dan moet je de settings herstellen. Voor de Nano:
+programmeren, dan moet je de instellingen herstellen. Voor de Nano:
 
  * Board: Arduino Nano
  * Processor: ATmega328P
@@ -64,7 +64,7 @@ lichtsterkte variëren. Ik heb een sketch gemaakt dat op willekeurige
 momenten, een willekeurige LED laat oplichten, met een willekeurige
 lichtintensiteit, waarna de LED langzaam uitdooft. 
 
-Vor het normale gebruik van de tiny zit er een pull-upweerstand van
+Voor het normale gebruik van de tiny zit er een pull-upweerstand van
 10kΩ op de reset-pin, die je kunt laten zitten tijdens het
 programmeren. Tussen Vcc en GND zit een condensator van 0.1µF om de
 spanning te stabiliseren.

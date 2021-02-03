@@ -31,7 +31,8 @@ de pin die met `D10` is gemarkeerd.
 Nadat de sketch `ArduinoISP` geladen is op de Nano moet je een
 condensator van 10µF zetten tussen GND (-) en RST (+) van de Arduino.
 Dit wordt niet vermeld in de documentatie in de sketch, maar moet wel,
-volgens de diverse video's hierover die op Youtube zijn te vinden.
+volgens de diverse video's hierover die op Youtube zijn te vinden
+(zoals [deze](https://www.youtube.com/watch?v=gXXdoeu7yWw)).
 
 Dan, in de Arduino IDE moet je de
 [ATtiny Core](https://github.com/SpenceKonde/ATTinyCore) installeren.

@@ -1,7 +1,7 @@
 ## Project 03 — LED-waardes
 
 Ik wilde bepalen hoeveel vermogen verschillend gekleurde LEDs
-verbruiken, met de vraag, welke voorschakelweerstand zou je moeten
+verbruiken, met de vraag, welke voorschakelweerstand je zou moeten
 gebruiken bij een spanning van 5 volt.
 
 Ik heb getest met drie verschillende weerstanden, van 220, 470 en 680
@@ -19,7 +19,7 @@ Daarna heb ik de volgende waardes berekend:
 De resultaten staan in onderstaande tabel:
 
 
-kleur | R (Ω) | I (mA) | U<sub>R</sub> (V) | U<sub>D</sub> (V) | P<sub>D</subd (mW)
+kleur | R (Ω) | I (mA) | U<sub>R</sub> (V) | U<sub>D</sub> (V) | P<sub>D</sub> (mW)
 ------|-------|--------|-------------------|-------------------|-------------------
 rood  | 217 | 13.4 |  2.91 | 2.09 | 28.0
 ..    | 467 | 6.48 |  3.03 | 1.97 | 12.8

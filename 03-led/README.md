@@ -48,3 +48,7 @@ De vraag is natuurlijk: hoeveel vermogen kan een LED verdragen? In
 schakelingen zie ik vaak 220 ohm gebruikt als voorschakelweerstand.
 Maar gebruik je 470 ohm, dan gaat het vermogen met meer dan de helft
 omlaag, en voor het oog brandt de LED vrijwel niet zwakker.
+
+Op
+[Calculating The Minimum Resistor Value For An LED](https://www.woolseyworkshop.com/2018/05/05/calculating-the-minimum-resistor-value-for-an-led/)
+wordt 330 ohm aanbevolen als minimum.

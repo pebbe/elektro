@@ -11,9 +11,9 @@ Met LED en weerstand in serie heb ik het stroomverbruik gemeten.
 
 Daarna heb ik de volgende waardes berekend:
 
- * De spanning over de weerstand is weerstand maal stroomsterkte
- * De spanning over de LED is 5V min spanning over de weerstand
- * Het gebruikte vermogen van de LED is stroomsterkte maal spanning
+ * De spanning over de weerstand (U<sub>R</sub>) is weerstand (R) maal stroomsterkte (I)
+ * De spanning over de LED (U<sub>D</sub>) is 5V min spanning over de weerstand
+ * Het gebruikte vermogen van de LED (P<sub>D</sub>) is stroomsterkte maal spanning
   over de LED
 
 De resultaten staan in onderstaande tabel:

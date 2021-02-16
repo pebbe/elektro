@@ -11,10 +11,12 @@ Met LED en weerstand in serie heb ik het stroomverbruik gemeten.
 
 Daarna heb ik de volgende waardes berekend:
 
- * De spanning over de weerstand (U<sub>R</sub>) is weerstand (R) maal stroomsterkte (I)
- * De spanning over de LED (U<sub>D</sub>) is 5V min spanning over de weerstand
- * Het gebruikte vermogen van de LED (P<sub>D</sub>) is stroomsterkte maal spanning
-  over de LED
+ * De spanning over de weerstand (U<sub>R</sub>) is weerstand (R) maal
+   stroomsterkte (I)
+ * De spanning over de LED (U<sub>D</sub>) is 5V min spanning over de
+   weerstand
+ * Het gebruikte vermogen van de LED (P<sub>D</sub>) is stroomsterkte
+   maal spanning over de LED
 
 De resultaten staan in onderstaande tabel:
 
@@ -36,6 +38,11 @@ blauw | 217 | 9.31 |  2.02 | 2.98 | 27.7
 wit   | 217 | 9.94 |  2.16 | 2.84 | 28.2
 ..    | 467 | 4.85 |  2.26 | 2.74 | 13.3
 ..    | 671 | 3.43 |  2.30 | 2.70 | 9.27
+
+De *voltage drop* over de LEDs is vrij constant, rond de 2 volt voor rood en
+geel, 2.7 à 2.8 voor groen, blauw en wit. Dat valt redelijk in het
+bereik dat wordt gegeven op
+[Wikipedia](https://en.wikipedia.org/wiki/Light-emitting_diode_physics#Materials).
 
 De vraag is natuurlijk: hoeveel vermogen kan een LED verdragen? In
 schakelingen zie ik vaak 220 ohm gebruikt als voorschakelweerstand.

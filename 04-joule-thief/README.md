@@ -27,4 +27,3 @@ uiteinden ontdaan van isolatie met schuurpapier, aan dikke draden met
 een enkele kern vastmaken door het koperdraad er strak omheen te
 draaien, en met isolatietape stevig vast te drukken. Dat is niet
 ideaal.
-

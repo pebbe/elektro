@@ -52,6 +52,12 @@ blokje
 
 Past [deze batterijclip](https://www.okaphone.com/artikel.asp?id=435836) op de houders voor 2× C en 2× D?
 
+Voor aansluiting via draad met solide kern:
+
+ * [Kabelverbinding](https://www.okaphone.com/artikel.asp?id=451168)
+ * [Krimptang](https://www.okaphone.com/artikel.asp?id=460721)
+
+
 ----
 
 ### 1,5 V → 5 V

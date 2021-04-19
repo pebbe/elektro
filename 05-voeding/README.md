@@ -1,5 +1,15 @@
 ## Project 05 — Voeding
 
+Schakelingen met ICs werken gewoonlijk op 5 volt. Die kun je dus niet
+direct op een batterij aansluiten. Er zijn wel converters en ICs
+waarmee je een voltage kunt verhogen of verlagen. Met een IC moeten er
+gewoonlijk nog wat componenten bij om de schakeling compleet te
+maken.
+
+Wat voor batterijen kun je het best gebruiken? Welke invoerspanning?
+Hieronder een overzicht van de verschillen in capaciteit van een
+aantal opties.
+
 Capaciteit volgens [Wikipedia](https://nl.wikipedia.org/wiki/Batterij_(elektrisch)#Modellen)
 
 | spanning | batterij | capaciteit |
@@ -16,47 +26,62 @@ Capaciteit volgens [Wikipedia](https://nl.wikipedia.org/wiki/Batterij_(elektrisc
 
 Op de [Engelse Wikipediapagina](https://en.wikipedia.org/wiki/List_of_battery_sizes#Cylindrical_batteries) worden (veel) lagere waardes gegeven.
 
+Geen enkele omzetting van voltage is zonder verlies, en bij de ene
+omzetting is het verlies groter dan bij de andere. Maar hier heb ik me
+niet door laten leiden.
+
+Ik heb gekozen voor twee AA-batterijen, bijna even compact als een
+blokje van 9 volt, maar met een veel grotere capaciteit.
+Bovendien
+vond ik een IC voor de omzetting die blijft werken tot de
+invoerspanning is gedaald tot 1,8 volt. Je kunt hiermee de batterijen
+dus aardig leeg trekken.
+
+Benodigde onderdelen:
+
 ----
 
-### Batterijhouders
+### 3 V → 5 V
 
-AAA
-: [houder met soldeerlippen](https://www.okaphone.com/artikel.asp?id=436527)
 
-AA
-: [houder met aansluitdraden](https://www.okaphone.com/artikel.asp?id=460155)
+| onderdeel      | | type       | prijs  |
+|----------------|-|:----------:|-------:|
+| IC             | | LT1301CN8  | € 6,90 |
+| transistor     | | 2N4403     | € 0,45 |
+| Schottky diode | | 1N5817     | € 0,45 |
+| spoel          | | 10–22µH    | € 3,45 |
+| condensator    | 2× | 100 µF  |        |
+| condensator    | | 0,1 µF     |        |
+| weerstand      | | 470 Ω      |        |
 
-C
-: [houder met soldeerlippen](https://www.okaphone.com/artikel.asp?id=1357)
+Minimum invoerspanning 1,8 V
 
-D
-: [houder met soldeerlippen](https://www.okaphone.com/artikel.asp?id=1351)
+Uitvoer 5 V, 200 mA (met 2× AA als voeding)
 
-2× AAA
-: [houder met aansluitdraden](https://www.okaphone.com/artikel.asp?id=469708)
-: [houder met schakelaar en en JST connector](https://www.okaphone.com/artikel.asp?id=488753)
+----
 
-2× AA
-: [houder met aansluitdraden](https://www.okaphone.com/artikel.asp?id=455909)
-: [houder met schakelaar en draden](https://www.okaphone.com/artikel.asp?id=456159)
+In het schema is de SELECT-pin niet aangesoten, maar in de tekst van de
+datasheet staat dat je die met aarde (GND) kunt verbinden. Dat heb ik
+maar gedaan. Verbind je de SELECT-pin met de plus, dan is de uitvoer
+niet 5 maar 12 volt.
 
-2× C
-: [houder met snap-aansluiting](https://www.okaphone.com/artikel.asp?id=1358)
+Okaphone had een mooie dichte behuizing voor twee AAs, inclusief
+schakelaar, ook een reden om deze optie te kiezen.
 
-2× D
-: [houder met snap-aansluiting](https://www.okaphone.com/artikel.asp?id=1354)
+De datasheet
+raadt aan een spoel met een weerstand van minder dan 0,03Ω te gebruiken.
+Maar ik had er een nodig die op een breadboard kan, en die was alleen
+beschikbaar van 0,09Ω. Dat zou minder efficiënt zijn, maar het werkt.
 
-blokje
-: [batterijclip](https://www.okaphone.com/artikel.asp?id=435836)
-: [houder met aansluitdraden](https://www.okaphone.com/artikel.asp?id=435562)
+Voor het eerst heb ik een mini-breadboard gebruikt. Dus zonder die
+comfortabele voedingsrails over de lengte. Dat maakte het een
+gepriegel om uit te vinden hoe de componenten het beste geplaatst
+konden worden.
 
-Past [deze batterijclip](https://www.okaphone.com/artikel.asp?id=435836) op de houders voor 2× C en 2× D?
+Het resultaat is een voeding die op twee AA-batterijen 5,15 volt
+levert. 
 
-Voor aansluiting via draad met solide kern:
-
- * [Kabelverbinding](https://www.okaphone.com/artikel.asp?id=451168)
- * [Krimptang](https://www.okaphone.com/artikel.asp?id=460721)
-
+Hieronder de andere opties die ik bekeken heb.
 
 ----
 
@@ -66,7 +91,7 @@ Voor aansluiting via draad met solide kern:
 |----------------|:---------:|-------:|
 | IC             | MAX756CPA | € 7,50 |
 | Schottky diode | 1N5817    | € 0,45 |
-| [spoel](https://www.okaphone.com/artikel.asp?id=463594)          | 22 µH     | € 3,45 |
+| spoel          | 22 µH     | € 3,45 |
 | condensator    | 150 µF    |        |
 | condensator    | 100 µF    |        |
 | condensator    | 0,1 µF    |        |
@@ -75,37 +100,6 @@ Voor aansluiting via draad met solide kern:
 Invoerspanning 0,7 V tot 1,8 V
 
 Uitvoer  5 V, 200 mA
-
-Spoel zou weerstand van 0,03 Ω of minder moeten hebben:
-
- * 22 μH, ≤ 410 mA, 0,84 Ω — € 0,50
- * 22 μH, ≤ 1,08 A, 0,09 Ω — € 3,45
- * 22 μH, ≤ 1,8 A, 0,051 Ω — € 1,85 — (te?) korte pootjes
- * 22 μH, ≤ 11 A, 0,012 Ω — € 8,95 — (te?) korte pootjes, niet op voorraad
-
-----
-
-### 3 V → 5 V
-
-| onderdeel      | | type       | prijs  |
-|----------------|-|:----------:|-------:|
-| IC             | | LT1301CN8  | € 6,90 |
-| transistor     | | 2N4403     | € 0,45 |
-| Schottky diode | | 1N5817     | € 0,45 |
-|  [spoel](https://www.okaphone.com/artikel.asp?id=463594) | | 10–22µH    | € 3,45 |
-| condensator    | 2× | 100 µF  |        |
-| condensator    | | 0,1 µF     |        |
-| weerstand      | | 470 Ω      |        |
-
-Minimum invoerspanning 1,8 V
-
-Uitvoer 5 V, 200 mA (met 2× AA als voeding)
-
-Spoel zou weerstand van 0,03 Ω of minder moeten hebben:
-
- * 10 μH, ≤ 680 mA, 0,49 Ω — € 0,50
- * 10 μH, ≤ 2,5 A, 0,027 Ω — € 1,85 — (te?) korte pootjes
- * 22 μH, ≤ 1,08 A, 0,09 Ω — € 3,45
 
 ----
 

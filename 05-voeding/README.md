@@ -49,7 +49,7 @@ Benodigde onderdelen:
 | IC             | | LT1301CN8  | € 6,90 |
 | transistor     | | 2N4403     | € 0,45 |
 | Schottky diode | | 1N5817     | € 0,45 |
-| spoel          | | 10–22µH    | € 3,45 |
+| spoel          | | 22µH       | € 3,45 |
 | condensator    | 2× | 100 µF  |        |
 | condensator    | | 0,1 µF     |        |
 | weerstand      | | 470 Ω      |        |

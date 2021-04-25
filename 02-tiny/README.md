@@ -69,3 +69,6 @@ Voor het normale gebruik van de tiny zit er een pull-upweerstand van
 10kΩ op de reset-pin, die je kunt laten zitten tijdens het
 programmeren. Tussen Vcc en GND zit een condensator van 0.1µF om de
 spanning te stabiliseren.
+
+De schakeling wordt gevoed met 5 volt, maar blijkt ook op 3 volt te
+werken, al branden de LEDs dan een stuk zwakker.

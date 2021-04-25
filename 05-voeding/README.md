@@ -81,6 +81,14 @@ konden worden.
 Het resultaat is een voeding die op twee AA-batterijen 5,15 volt
 levert. 
 
+Maar het rendement valt vies tegen. Gebruik ik de voeding voor m'n
+morse-schakeling dan houdt die het maar een dag vol. Met alle LEDs uit
+verbruikt die schakeling zo'n 22 mA, maar de voeding verbruikt dan 76
+mA. De schakeling met de ATtiny verbuikt 8.1 mA, maar de voeding
+verbruikt daarvoor 25 mA. M'n voedingsschakeling heeft dus een
+rendement van niet meer dan rond de 30%.
+
+
 Hieronder de andere opties die ik bekeken heb.
 
 ----

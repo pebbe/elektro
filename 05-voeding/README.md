@@ -60,7 +60,7 @@ Uitvoer 5 V, 200 mA (met 2× AA als voeding)
 
 ----
 
-In het schema is de SELECT-pin niet aangesoten, maar in de tekst van de
+In het schema is de SELECT-pin niet aangesloten, maar in de tekst van de
 datasheet staat dat je die met aarde (GND) kunt verbinden. Dat heb ik
 maar gedaan. Verbind je de SELECT-pin met de plus, dan is de uitvoer
 niet 5 maar 12 volt.

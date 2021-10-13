@@ -29,7 +29,7 @@ gebruik.
 | wit  |  1kΩ | 1nF | 5,4MHz |
 | rood |  1kΩ | 560pF | 7,4MHz |
 | wit (zwak) | 1kΩ | 560pF | 7,4MHz |
-| wit | 1kΩ | 10nF | 4,6 MHz |
+| wit | 1kΩ | 10nF | 4,6MHz |
 
 Dat is zijn zeer hoge frequenties, een factor 10 groter dan wat hier
 en daar in documentatie wordt genoemd. Ligt het aan m'n type

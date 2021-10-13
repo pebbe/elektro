@@ -1,4 +1,4 @@
-## Project 04 — Flitsende Joule Thief
+## Project 07 — Flitsende Joule Thief
 
 Verder prutsen aan de Joule Thief (zie ook
 [04](../04-joule-thief/README.md) en

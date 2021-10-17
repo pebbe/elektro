@@ -44,66 +44,67 @@ bool day = false;
 #include "U8g2lib.h"
 U8G2_SH1106_128X64_NONAME_1_4W_SW_SPI u8g2(U8G2_R2, 4, 5, 6, 7);
 
-unsigned int tzdata[] = {
-                         1616893200,
-                         1635642000,
-                         1648342800,
-                         1667091600,
-                         1679792400,
-                         1698541200,
-                         1711846800,
-                         1729990800,
-                         1743296400,
-                         1761440400,
-                         1774746000,
-                         1792890000,
-                         1806195600,
-                         1824944400,
-                         1837645200,
-                         1856394000,
-                         1869094800,
-                         1887843600,
-                         1901149200,
-                         1919293200,
-                         1932598800,
-                         1950742800,
-                         1964048400,
-                         1982797200,
-                         1995498000,
-                         2014246800,
-                         2026947600,
-                         2045696400,
-                         2058397200,
-                         2077146000,
-                         2090451600,
-                         2108595600,
-                         2121901200,
-                         2140045200,
-                         2153350800,
-                         2172099600,
-                         2184800400,
-                         2203549200,
-                         2216250000,
-                         2234998800,
-                         2248304400,
-                         2266448400,
-                         2279754000,
-                         2297898000,
-                         2311203600,
-                         2329347600,
-                         2342653200,
-                         2361402000,
-                         2374102800,
-                         2392851600,
-                         2405552400,
-                         2424301200,
-                         2437606800,
-                         2455750800,
-                         2469056400,
-                         2487200400,
-                         2500506000,
-                         2519254800,
-                         0 };
+unsigned int
+    tzdata[] = {
+            1616893200,
+            1635642000,
+            1648342800,
+            1667091600,
+            1679792400,
+            1698541200,
+            1711846800,
+            1729990800,
+            1743296400,
+            1761440400,
+            1774746000,
+            1792890000,
+            1806195600,
+            1824944400,
+            1837645200,
+            1856394000,
+            1869094800,
+            1887843600,
+            1901149200,
+            1919293200,
+            1932598800,
+            1950742800,
+            1964048400,
+            1982797200,
+            1995498000,
+            2014246800,
+            2026947600,
+            2045696400,
+            2058397200,
+            2077146000,
+            2090451600,
+            2108595600,
+            2121901200,
+            2140045200,
+            2153350800,
+            2172099600,
+            2184800400,
+            2203549200,
+            2216250000,
+            2234998800,
+            2248304400,
+            2266448400,
+            2279754000,
+            2297898000,
+            2311203600,
+            2329347600,
+            2342653200,
+            2361402000,
+            2374102800,
+            2392851600,
+            2405552400,
+            2424301200,
+            2437606800,
+            2455750800,
+            2469056400,
+            2487200400,
+            2500506000,
+            2519254800,
+            0 };
 
 
 void setup() {
@@ -135,18 +136,8 @@ void setup() {
     }
 #endif
 
-    while (status != WL_CONNECTED) {
-        draw("?con");
-        PRINT("Attempting to connect to SSID: ");
-        PRINTLN(ssid);
-        status = WiFi.begin(ssid, pass);
-        delay(10000);
-    }
-    draw("!con");
-    PRINTLN("Connected to WiFi");
-
-    printWifiStatus();
-    delay(5000);
+    getClock();
+    getSun();
 }
 
 void loop() {
@@ -161,6 +152,7 @@ void loop() {
         doSun(2);
         break;
     }
+    disconnect();
     if (++state > state_max) {
         state = 0;
     }
@@ -213,6 +205,7 @@ void doClock() {
         now = millis();
         diff = (now - clockms) / 1000;
     }
+
     now = epoch + diff;
     now += tz(now);
 
@@ -248,6 +241,9 @@ unsigned int tz(unsigned int t) {
 }
 
 void getClock() {
+
+    connect();
+
     draw("?klok");
     PRINTLN("getClock()");
     Udp.begin(localPort);
@@ -332,6 +328,9 @@ String format(unsigned long t) {
 }
 
 int getSun() {
+
+    connect();
+
     t1 = 0;
     t2 = 0;
 
@@ -437,4 +436,32 @@ unsigned long sendNTPpacket(IPAddress& address) {
     //Serial.println("5");
     Udp.endPacket();
     //Serial.println("6");
+}
+
+void connect() {
+    status = WiFi.status();
+    if (status == WL_CONNECTED) {
+        return;
+    }
+    while (status != WL_CONNECTED) {
+        draw("?con");
+        PRINT("Attempting to connect to SSID: ");
+        PRINTLN(ssid);
+        status = WiFi.begin(ssid, pass);
+        delay(10000);
+    }
+    draw("!con");
+    PRINTLN("Connected to WiFi");
+    printWifiStatus();
+    delay(5000);
+}
+
+void disconnect() {
+    if (status != WL_CONNECTED) {
+        return;
+    }
+    WiFi.end();
+    status = WiFi.status();
+    PRINT("Disconnect: ");
+    PRINTLN(status);
 }

@@ -1,7 +1,7 @@
 
-#define DEBUG 0
+//#define DEBUG
 
-#if DEBUG
+#ifdef DEBUG
 #define PRINT(x) Serial.print(x)
 #define PRINTLN(x) Serial.println(x)
 #define WRITE(x) Serial.write(x)
@@ -34,18 +34,26 @@ char server[] = "urd2.let.rug.nl";
 WiFiSSLClient client;
 
 int state = 0;
-int state_max = 2;
+int state_max = 4;
 
 unsigned long ms = 0;
 unsigned long t1 = 0;
 unsigned long t2 = 0;
 bool day = false;
 
+#include <Adafruit_Sensor.h>
+#include <DHT.h>
+#include <DHT_U.h>
+
+#define DHTPIN  3
+#define DHTTYPE DHT11
+DHT_Unified dht(DHTPIN, DHTTYPE);
+
 #include "U8g2lib.h"
 U8G2_SH1106_128X64_NONAME_1_4W_SW_SPI u8g2(U8G2_R2, 4, 5, 6, 7);
 
 unsigned int
-    tzdata[] = {
+tzdata[] = {
             1616893200,
             1635642000,
             1648342800,
@@ -109,7 +117,7 @@ unsigned int
 
 void setup() {
 
-#if DEBUG
+#ifdef DEBUG
     Serial.begin(9600);
     while (!Serial)
         ;
@@ -125,7 +133,7 @@ void setup() {
         while (true);
     }
 
-#if DEBUG
+#ifdef DEBUG
     String fv = WiFi.firmwareVersion();
     if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
         Serial.print("Current Wifi firmware version: ");
@@ -138,6 +146,8 @@ void setup() {
 
     getClock();
     getSun();
+
+    dht.begin();
 }
 
 void loop() {
@@ -150,6 +160,12 @@ void loop() {
         break;
     case 2:
         doSun(2);
+        break;
+    case 3:
+        doDHT(1);
+        break;
+    case 4:
+        doDHT(2);
         break;
     }
     disconnect();
@@ -214,7 +230,7 @@ void doClock() {
     PRINT((now % 86400L) / 3600); // print the hour (86400 equals secs per day)
     int h = (now % (86400L / 2)) / 3600;
     if (h == 0) {
-      h = 12;
+        h = 12;
     }
     String t = String(h);
     PRINT(':');
@@ -389,13 +405,38 @@ int getSun() {
     return 0;
 }
 
+void doDHT(int n) {
+    PRINT("doDHT(");
+    PRINT(n);
+    PRINTLN(")");
+    sensors_event_t event;
+    if (n == 1) {
+        dht.temperature().getEvent(&event);
+        PRINT(event.temperature);
+        PRINTLN("°");
+        int t = int(event.temperature * 10.0 + 0.5);
+        String s = String(t / 10);
+        s += ",";
+        s += String(t % 10);
+        s += "\xB0";
+        draw(s.c_str());
+        return;
+    }
+    dht.humidity().getEvent(&event);
+    PRINT(event.relative_humidity);
+    PRINTLN("%");
+    String s = String(int(event.relative_humidity + 0.5));
+    s += "%";
+    draw(s.c_str());
+}
+
 void printWifiStatus() {
     long rssi = WiFi.RSSI();
     String s = String(rssi);
     s += "\"";
     draw(s.c_str());
 
-#if DEBUG
+#ifdef DEBUG
     // print the SSID of the network you're attached to:
     Serial.print("SSID: ");
     Serial.println(WiFi.SSID());
@@ -406,7 +447,7 @@ void printWifiStatus() {
     Serial.println(ip);
 
     // print the received signal strength:
-    Serial.print("signal strength (RSSI):");
+    Serial.print("signal strength (RSSI): ");
     Serial.print(rssi);
     Serial.println(" dBm");
 #endif

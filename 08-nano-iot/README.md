@@ -1,4 +1,4 @@
-## Project 08 — Wifi
+## Project 08 — Arduino Nano 33 IoT
 
 ### Resources
 

@@ -162,8 +162,8 @@ void loop() {
 void draw(char const *s, int opt) {
     u8g2.firstPage();
     do {
-        u8g2.setFont(u8g2_font_fur30_tf);
-        u8g2.drawStr(64 - u8g2.getStrWidth(s) / 2, 32 + 14, s);
+        u8g2.setFont(u8g2_font_logisoso34_tf /* u8g2_font_fur30_tf */);
+        u8g2.drawStr(64 - u8g2.getStrWidth(s) / 2, 32 + 16, s);
         switch (opt) {
         case 1:
             // dag links
@@ -212,7 +212,11 @@ void doClock() {
     // print the hour, minute and second:
     PRINT("The local time is ");       // UTC is the time at Greenwich Meridian (GMT)
     PRINT((now % 86400L) / 3600); // print the hour (86400 equals secs per day)
-    String t = String((now % (86400L / 2)) / 3600);
+    int h = (now % (86400L / 2)) / 3600;
+    if (h == 0) {
+      h = 12;
+    }
+    String t = String(h);
     PRINT(':');
     t += ":";
     if (((now % 3600) / 60) < 10) {
@@ -318,7 +322,7 @@ String format(unsigned long t) {
     t += 30000; // + halve minuut
     t /= 60000; // millis -> minuten
     String s = String(t / 60);
-    s += " ";
+    s += ".";
     unsigned long m = t % 60;
     if (m < 10) {
         s += "0";

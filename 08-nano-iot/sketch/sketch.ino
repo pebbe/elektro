@@ -172,14 +172,27 @@ void loop() {
     if (++state > state_max) {
         state = 0;
     }
-    delay(10000);
+    delay(6000);
 }
 
 void draw(char const *s, int opt) {
     u8g2.firstPage();
     do {
         u8g2.setFont(u8g2_font_logisoso34_tf /* u8g2_font_fur30_tf */);
-        u8g2.drawStr(64 - u8g2.getStrWidth(s) / 2, 32 + 16, s);
+        if (opt > 0 && opt < 5) {
+            // De spatie is te breed bij dit font, dus gebruik ik een punt in doSun()
+            // Hier in de uitvoer wordt die punt overgeslagen
+            char s2[10];
+            strcpy(s2, s);
+            int i = strlen(s2);
+            int w1 = u8g2.getStrWidth(s2);
+            s2[i-3] = '\0';
+            int w2 = u8g2.getStrWidth(s2 + i - 2);
+            u8g2.drawStr(64 - w1 / 2, 32 + 16, s2);
+            u8g2.drawStr(64 - w1 / 2 + w1 - w2, 32 + 16, s2 + i - 2);
+        } else {
+            u8g2.drawStr(64 - u8g2.getStrWidth(s) / 2, 32 + 16, s);
+        }
         switch (opt) {
         case 1:
             // dag links
@@ -416,7 +429,7 @@ void doDHT(int n) {
         PRINTLN("°");
         int t = int(event.temperature * 10.0 + 0.5);
         String s = String(t / 10);
-        s += ",";
+        s += ".";
         s += String(t % 10);
         s += "\xB0";
         draw(s.c_str());
@@ -498,7 +511,7 @@ void connect() {
     draw("!con");
     PRINTLN("Connected to WiFi");
     printWifiStatus();
-    delay(5000);
+    delay(2000);
 }
 
 void disconnect() {

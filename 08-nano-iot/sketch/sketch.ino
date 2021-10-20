@@ -1,4 +1,7 @@
 
+// TODO: code reorganiseren, opruimen, leesbaarder maken
+// TODO: zie TODOs beneden
+
 //#define DEBUG
 
 #ifdef DEBUG
@@ -30,6 +33,7 @@ unsigned long clockms = 0;
 unsigned long epoch = 0;
 
 int status = WL_IDLE_STATUS;
+int upcount = 0;
 char server[] = "urd2.let.rug.nl";
 WiFiSSLClient client;
 
@@ -144,9 +148,6 @@ void setup() {
     }
 #endif
 
-    getClock();
-    getSun();
-
     dht.begin();
 }
 
@@ -178,7 +179,12 @@ void loop() {
 void draw(char const *s, int opt) {
     u8g2.firstPage();
     do {
-        u8g2.setFont(u8g2_font_logisoso34_tf /* u8g2_font_fur30_tf */);
+        if (status == WL_CONNECTED) {
+            u8g2.setFont(u8g2_font_open_iconic_all_2x_t);
+            u8g2.drawStr(0, 40, "\xF7");
+        }
+
+        u8g2.setFont(u8g2_font_logisoso34_tf);
         if (opt > 0 && opt < 5) {
             // De spatie is te breed bij dit font, dus gebruik ik een punt in doSun()
             // Hier in de uitvoer wordt die punt overgeslagen
@@ -219,24 +225,34 @@ void draw(char const *s) {
 }
 
 void doClock() {
+
+    // TODO: wat als getClock mislukt?
+
     PRINTLN("doClock()");
     if (clockms == 0) {
         getClock();
     }
     unsigned long now = millis();
     if (now < clockms) {
+        // wrap around
         getClock();
         now = millis();
     }
     unsigned long diff = (now - clockms) / 1000;
     if (diff > 86400) {
+        // resync na een dag
         getClock();
         now = millis();
         diff = (now - clockms) / 1000;
     }
 
     now = epoch + diff;
-    now += tz(now);
+    for (int i = 0; tzdata[i] != 0; i++) {
+        if (tzdata[i] > now) {
+            now += 3600 + 3600 * (i%2);
+            break;
+        }
+    }
 
     // print the hour, minute and second:
     PRINT("The local time is ");       // UTC is the time at Greenwich Meridian (GMT)
@@ -262,15 +278,6 @@ void doClock() {
     }
     PRINTLN(now % 60); // print the second
     draw(t.c_str());
-}
-
-unsigned int tz(unsigned int t) {
-    for (int i = 0; tzdata[i] != 0; i++) {
-        if (tzdata[i] > t) {
-            return 3600 + 3600 * (i%2);
-        }
-    }
-    return 0;
 }
 
 void getClock() {
@@ -309,6 +316,9 @@ void getClock() {
 }
 
 void doSun(int n) {
+
+    // TODO: wat als getSun() mislukt?
+
     PRINT("doSun(");
     PRINT(n);
     PRINTLN(")");
@@ -383,7 +393,7 @@ int getSun() {
 
     ms = millis();
 
-    delay(500);
+    delay(1000);
     String s;
     int nl = 0;
     while (client.available()) {
@@ -497,6 +507,11 @@ unsigned long sendNTPpacket(IPAddress& address) {
 }
 
 void connect() {
+
+    // TODO: wat als er geen verbinding gemaakt kan worden?
+
+    upcount = 20;
+
     status = WiFi.status();
     if (status == WL_CONNECTED) {
         return;
@@ -508,16 +523,20 @@ void connect() {
         status = WiFi.begin(ssid, pass);
         delay(10000);
     }
-    draw("!con");
     PRINTLN("Connected to WiFi");
     printWifiStatus();
     delay(2000);
 }
 
 void disconnect() {
+    if (upcount > 0) {
+        upcount--;
+        return;
+    }
     if (status != WL_CONNECTED) {
         return;
     }
+
     WiFi.end();
     status = WiFi.status();
     PRINT("Disconnect: ");

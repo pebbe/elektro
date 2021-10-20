@@ -194,6 +194,7 @@ void draw(char const *s, int opt) {
             int w1 = u8g2.getStrWidth(s2);
             s2[i-3] = '\0';
             int w2 = u8g2.getStrWidth(s2 + i - 2);
+            // w1 -= 4; // spatie nog iets smaller maken
             u8g2.drawStr(64 - w1 / 2, 32 + 16, s2);
             u8g2.drawStr(64 - w1 / 2 + w1 - w2, 32 + 16, s2 + i - 2);
         } else {
@@ -372,7 +373,9 @@ String format(unsigned long t) {
 
 int getSun() {
 
-    connect();
+    if (connect() < 0) {
+        return -1;
+    }
 
     t1 = 0;
     t2 = 0;
@@ -382,6 +385,7 @@ int getSun() {
     if (!client.connect(server, 443)) {
         draw("*zon");
         PRINTLN("Connecting failed");
+        backoffSun();
         return -1;
     }
 
@@ -418,6 +422,7 @@ int getSun() {
     if (s.length() < 11) {
         draw("*kort");
         PRINTLN("Too short");
+        backoffSun();
         return -1;
     }
 
@@ -426,6 +431,10 @@ int getSun() {
     t2 = 60000 * s.substring(7, 11).toInt();
 
     return 0;
+}
+
+void backoffSun() {
+  // TODO
 }
 
 void doDHT(int n) {
@@ -506,7 +515,7 @@ unsigned long sendNTPpacket(IPAddress& address) {
     //Serial.println("6");
 }
 
-void connect() {
+int connect() {
 
     // TODO: wat als er geen verbinding gemaakt kan worden?
 
@@ -514,18 +523,26 @@ void connect() {
 
     status = WiFi.status();
     if (status == WL_CONNECTED) {
-        return;
+        return 0;
     }
-    while (status != WL_CONNECTED) {
-        draw("?con");
+    for (int i = 0; i < 10 && status != WL_CONNECTED; i++) {
+        String s = "?c:";
+        s += String(i + 1);
+        draw(s.c_str());
         PRINT("Attempting to connect to SSID: ");
         PRINTLN(ssid);
         status = WiFi.begin(ssid, pass);
         delay(10000);
     }
+    if (status != WL_CONNECTED) {
+        draw("*con");
+        PRINT("Connecting to SSID failed");
+        return -1;
+    }
     PRINTLN("Connected to WiFi");
     printWifiStatus();
     delay(2000);
+    return 0;
 }
 
 void disconnect() {

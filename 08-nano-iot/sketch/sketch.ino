@@ -197,6 +197,10 @@ void draw(char const *s, int opt) {
             // w1 -= 4; // spatie nog iets smaller maken
             u8g2.drawStr(64 - w1 / 2, 32 + 16, s2);
             u8g2.drawStr(64 - w1 / 2 + w1 - w2, 32 + 16, s2 + i - 2);
+        } else if (opt == 5) {
+            // bij temperatuur het graden-teken niet meerekenen voor het centreren
+            String s1 = String(s).substring(0, strlen(s) - 1);
+            u8g2.drawStr(64 - u8g2.getStrWidth(s1.c_str()) / 2, 32 + 16, s);
         } else {
             u8g2.drawStr(64 - u8g2.getStrWidth(s) / 2, 32 + 16, s);
         }
@@ -451,7 +455,7 @@ void doDHT(int n) {
         s += ".";
         s += String(t % 10);
         s += "\xB0";
-        draw(s.c_str());
+        draw(s.c_str(), 5);
         return;
     }
     dht.humidity().getEvent(&event);
@@ -526,7 +530,7 @@ int connect() {
         return 0;
     }
     for (int i = 0; i < 10 && status != WL_CONNECTED; i++) {
-        String s = "?c:";
+        String s = "?c";
         s += String(i + 1);
         draw(s.c_str());
         PRINT("Attempting to connect to SSID: ");

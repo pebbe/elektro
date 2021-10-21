@@ -203,19 +203,19 @@ void draw(char const *s, int opt) {
         switch (opt) {
         case 1:
             // dag links
-            u8g2.drawTriangle(0, 16, 16, 16, 8, 0);
+            u8g2.drawTriangle(0, 12, 12, 12, 6, 0);
             break;
         case 2:
             // nacht links
-            u8g2.drawTriangle(0, 47, 16, 47, 8, 63);
+            u8g2.drawTriangle(0, 51, 12, 51, 6, 63);
             break;
         case 3:
             // dag rechts
-            u8g2.drawTriangle(111, 47, 127, 47, 119, 63);
+            u8g2.drawTriangle(115, 51, 127, 51, 121, 63);
             break;
         case 4:
             // nacht rechts
-            u8g2.drawTriangle(111, 16, 127, 16, 119, 0);
+            u8g2.drawTriangle(115, 12, 127, 12, 121, 0);
             break;
         }
     } while( u8g2.nextPage() );

@@ -1,6 +1,4 @@
-
 // TODO: code reorganiseren, opruimen, leesbaarder maken
-// TODO: zie TODOs beneden
 
 //#define DEBUG
 
@@ -17,20 +15,16 @@
 #include <SPI.h>
 #include <WiFiNINA.h>
 #include <WiFiUdp.h>
+#include <NTPClient.h>
 
 #include "secret.h";
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 
-unsigned int localPort = 2390;        // local port to listen for UDP packets
-IPAddress timeServer(129, 6, 15, 28); // time.nist.gov NTP server
-const int NTP_PACKET_SIZE = 48;       // NTP timestamp is in the first 48 bytes of the message
-byte packetBuffer[ NTP_PACKET_SIZE];  //buffer to hold incoming and outgoing packets
-// A UDP instance to let us send and receive packets over UDP
-WiFiUDP Udp;
-
 unsigned long clockms = 0;
 unsigned long epoch = 0;
+unsigned clockboff = 0;
+unsigned clockboffnext = 1;
 
 int status = WL_IDLE_STATUS;
 int upcount = 0;
@@ -44,6 +38,8 @@ unsigned long ms = 0;
 unsigned long t1 = 0;
 unsigned long t2 = 0;
 bool day = false;
+unsigned sunboff = 0;
+unsigned sunboffnext = 1;
 
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
@@ -231,24 +227,27 @@ void draw(char const *s) {
 
 void doClock() {
 
-    // TODO: wat als getClock mislukt?
-
     PRINTLN("doClock()");
     if (clockms == 0) {
         getClock();
+        if (clockms == 0) {
+            draw("*klok");
+            return;
+        }
     }
     unsigned long now = millis();
     if (now < clockms) {
         // wrap around
-        getClock();
-        now = millis();
+        clockms = 0;
+        doClock();
+        return;
     }
     unsigned long diff = (now - clockms) / 1000;
-    if (diff > 86400) {
-        // resync na een dag
-        getClock();
-        now = millis();
-        diff = (now - clockms) / 1000;
+    if (diff > 43200) {
+        // resync na 12 uur
+        clockms = 0;
+        doClock();
+        return;
     }
 
     now = epoch + diff;
@@ -259,96 +258,102 @@ void doClock() {
         }
     }
 
-    // print the hour, minute and second:
-    PRINT("The local time is ");       // UTC is the time at Greenwich Meridian (GMT)
-    PRINT((now % 86400L) / 3600); // print the hour (86400 equals secs per day)
-    int h = (now % (86400L / 2)) / 3600;
-    if (h == 0) {
-        h = 12;
+    PRINT("locale tijd: ");
+    int hr = (now % (86400L / 2)) / 3600;
+    if (hr == 0) {
+        hr = 12;
     }
-    String t = String(h);
-    PRINT(':');
+    String t = String(hr);
     t += ":";
-    if (((now % 3600) / 60) < 10) {
-        // In the first 10 minutes of each hour, we'll want a leading '0'
+    PRINT(hr);
+    PRINT(':');
+    int mn = (now % 3600) / 60;
+    if (mn < 10) {
         PRINT('0');
         t += "0";
     }
-    PRINT((now  % 3600) / 60); // print the minute (3600 equals secs per minute)
-    t += String((now  % 3600) / 60);
+    PRINT(mn);
+    t += String(mn);
+#ifdef DEBUG
     PRINT(':');
-    if ((now % 60) < 10) {
-        // In the first 10 seconds of each minute, we'll want a leading '0'
+    int sec = now % 60;
+    if (sec < 10) {
         PRINT('0');
     }
-    PRINTLN(now % 60); // print the second
+    PRINTLN(sec);
+#endif
     draw(t.c_str());
 }
 
 void getClock() {
 
-    connect();
+    if (!connect()) {
+        return;
+    }
+
+    if (clockboff) {
+        PRINT("getClock() back-off: ");
+        PRINTLN(clockboff);
+        clockboff--;
+        return;
+    }
 
     draw("?klok");
     PRINTLN("getClock()");
-    Udp.begin(localPort);
-    sendNTPpacket(timeServer); // send an NTP packet to a time server
-    unsigned long now = millis();
-    // wait to see if a reply is available
-    delay(1000);
-    if (Udp.parsePacket()) {
-        PRINTLN("packet received");
-        // We've received a packet, read the data from it
-        Udp.read(packetBuffer, NTP_PACKET_SIZE); // read the packet into the buffer
 
-        //the timestamp starts at byte 40 of the received packet and is four bytes,
-        // or two words, long. First, extract the two words:
+    WiFiUDP ntpUDP;
+    NTPClient timeClient(ntpUDP, "nl.pool.ntp.org");
+    timeClient.begin();
 
-        unsigned long highWord = word(packetBuffer[40], packetBuffer[41]);
-        unsigned long lowWord = word(packetBuffer[42], packetBuffer[43]);
-        // combine the four bytes (two words) into a long integer
-        // this is NTP time (seconds since Jan 1 1900):
-        unsigned long secsSince1900 = highWord << 16 | lowWord;
-        // Unix time starts on Jan 1 1970. In seconds, that's 2208988800:
-        const unsigned long seventyYears = 2208988800UL;
-        // subtract seventy years:
-        epoch = secsSince1900 - seventyYears;
-        PRINT("Unix time = ");
-        PRINTLN(epoch);
-
-        clockms = now;
+    unsigned long ms1, ms2;
+    ms1 = millis();
+    if (timeClient.forceUpdate()) {
+        epoch = timeClient.getEpochTime();
+        ms2 = millis();
+        clockms = ms1 / 2 + ms2 / 2;
+        clockboffnext = 1;
+        PRINTLN(timeClient.getFormattedTime());
+    } else {
+        clockboff = clockboffnext;
+        if (clockboffnext < 64) {
+            clockboffnext *= 2;
+        }
+        draw("*klok");
+        PRINT("timeClient.update() failed, back-off: ");
+        PRINTLN(clockboff);
+        delay(6000);
     }
+    timeClient.end();
 }
 
 void doSun(int n) {
 
-    // TODO: wat als getSun() mislukt?
-
     PRINT("doSun(");
     PRINT(n);
     PRINTLN(")");
+
     if (t1 == 0 && t2 == 0) {
-        if (getSun()) {
+        if (!getSun()) {
             return;
         }
     }
     unsigned long now = millis();
     if (now < ms) {
         // wrap around
-        if (getSun()) {
-            return;
-        }
-        now = millis();
+        t1 = 0;
+        t2 = 0;
+        doSun(n);
+        return;
     }
     unsigned long diff = now - ms;
     if (diff > t2) {
         // volgende periode
-        if (getSun()) {
-            return;
-        }
-        now = millis();
-        diff = now - ms;
+        t1 = 0;
+        t2 = 0;
+        doSun(n);
+        return;
     }
+
     String s;
     int opt;
     if (n == 1) {
@@ -375,22 +380,31 @@ String format(unsigned long t) {
     return s;
 }
 
-int getSun() {
+bool getSun() {
 
-    if (connect() < 0) {
-        return -1;
+    if (!connect()) {
+        return false;
+    }
+
+    if (sunboff) {
+        draw("*zon");
+        PRINT("getSun() back-off: ");
+        PRINTLN(sunboff);
+        sunboff--;
+        return false;
     }
 
     t1 = 0;
     t2 = 0;
 
     draw("?zon");
-    PRINTLN("Starting connection to server...");
+    PRINT("Starting connection to server ");
+    PRINTLN(server);
     if (!client.connect(server, 443)) {
         draw("*zon");
         PRINTLN("Connecting failed");
         backoffSun();
-        return -1;
+        return false;
     }
 
     PRINTLN("connected to server");
@@ -423,22 +437,42 @@ int getSun() {
         client.stop();
     }
 
-    if (s.length() < 11) {
+    if (s.length() < 15) {
         draw("*kort");
         PRINTLN("Too short");
         backoffSun();
-        return -1;
+        return false;
     }
 
-    day = s.substring(0, 1) == "1";
-    t1 = 60000 * s.substring(2, 6).toInt();
-    t2 = 60000 * s.substring(7, 11).toInt();
+    if (s.substring(0, 3) != "SUN") {
+        draw("*zon");
+        PRINTLN("Invalid response");
+        backoffSun();
+        return false;
+    }
 
-    return 0;
+    day = s.substring(4, 5) == "1";
+    t1 = 60000 * s.substring(6, 10).toInt();
+    t2 = 60000 * s.substring(11, 15).toInt();
+
+    if (t1 == 0 && t2 == 0) {
+        backoffSun();
+        return false;
+    }
+
+    sunboffnext = 1;
+    return true;
 }
 
 void backoffSun() {
-  // TODO
+    sunboff = sunboffnext;
+    if (sunboffnext < 1024) {
+        sunboffnext *= 2;
+    }
+    draw("*zon");
+    PRINT("getSun() failed, back-off: ");
+    PRINTLN(sunboff);
+    delay(6000);
 }
 
 void doDHT(int n) {
@@ -469,7 +503,6 @@ void doDHT(int n) {
 void printWifiStatus() {
     long rssi = WiFi.RSSI();
     String s = String(rssi);
-    s += "\"";
     draw(s.c_str());
 
 #ifdef DEBUG
@@ -489,64 +522,35 @@ void printWifiStatus() {
 #endif
 }
 
-// send an NTP request to the time server at the given address
-unsigned long sendNTPpacket(IPAddress& address) {
-    //Serial.println("1");
-    // set all bytes in the buffer to 0
-    memset(packetBuffer, 0, NTP_PACKET_SIZE);
-    // Initialize values needed to form NTP request
-    // (see URL above for details on the packets)
-    //Serial.println("2");
-    packetBuffer[0] = 0b11100011;   // LI, Version, Mode
-    packetBuffer[1] = 0;     // Stratum, or type of clock
-    packetBuffer[2] = 6;     // Polling Interval
-    packetBuffer[3] = 0xEC;  // Peer Clock Precision
-    // 8 bytes of zero for Root Delay & Root Dispersion
-    packetBuffer[12]  = 49;
-    packetBuffer[13]  = 0x4E;
-    packetBuffer[14]  = 49;
-    packetBuffer[15]  = 52;
+bool connect() {
 
-    //Serial.println("3");
-
-    // all NTP fields have been given values, now
-    // you can send a packet requesting a timestamp:
-    Udp.beginPacket(address, 123); //NTP requests are to port 123
-    //Serial.println("4");
-    Udp.write(packetBuffer, NTP_PACKET_SIZE);
-    //Serial.println("5");
-    Udp.endPacket();
-    //Serial.println("6");
-}
-
-int connect() {
-
-    // TODO: wat als er geen verbinding gemaakt kan worden?
-
-    upcount = 20;
+    upcount = 10;
 
     status = WiFi.status();
     if (status == WL_CONNECTED) {
-        return 0;
+        return true;
     }
-    for (int i = 0; i < 10 && status != WL_CONNECTED; i++) {
+    for (int i = 0; i < 9; i++) {
         String s = "?c";
         s += String(i + 1);
         draw(s.c_str());
         PRINT("Attempting to connect to SSID: ");
         PRINTLN(ssid);
         status = WiFi.begin(ssid, pass);
+        if (status == WL_CONNECTED) {
+            break;
+        }
         delay(10000);
     }
     if (status != WL_CONNECTED) {
         draw("*con");
         PRINT("Connecting to SSID failed");
-        return -1;
+        return false;
     }
     PRINTLN("Connected to WiFi");
     printWifiStatus();
     delay(2000);
-    return 0;
+    return true;
 }
 
 void disconnect() {
@@ -557,7 +561,6 @@ void disconnect() {
     if (status != WL_CONNECTED) {
         return;
     }
-
     WiFi.end();
     status = WiFi.status();
     PRINT("Disconnect: ");

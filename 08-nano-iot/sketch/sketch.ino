@@ -17,6 +17,8 @@
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 
+#define LED 21
+
 #include "secret.h";
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
@@ -123,6 +125,8 @@ void setup() {
         ;
 #endif
 
+    pinMode(LED, OUTPUT);
+
     u8g2.begin();
     u8g2.setContrast(100); // 0..255
 
@@ -175,10 +179,12 @@ void loop() {
 void draw(char const *s, int opt) {
     u8g2.firstPage();
     do {
+	/*
         if (status == WL_CONNECTED) {
             u8g2.setFont(u8g2_font_open_iconic_all_2x_t);
             u8g2.drawStr(0, 40, "\xF7");
         }
+	*/
 
         u8g2.setFont(u8g2_font_logisoso34_tf);
         if (opt > 0 && opt < 5) {
@@ -302,7 +308,7 @@ void getClock() {
     PRINTLN("getClock()");
 
     WiFiUDP ntpUDP;
-    NTPClient timeClient(ntpUDP, "nl.pool.ntp.org");
+    NTPClient timeClient(ntpUDP, "fritz.box"); // "nl.pool.ntp.org");
     timeClient.begin();
 
     unsigned long ms1, ms2;
@@ -547,6 +553,7 @@ bool connect() {
         PRINT("Connecting to SSID failed");
         return false;
     }
+    digitalWrite(LED, HIGH);
     PRINTLN("Connected to WiFi");
     printWifiStatus();
     delay(2000);
@@ -562,6 +569,7 @@ void disconnect() {
         return;
     }
     WiFi.end();
+    digitalWrite(LED, LOW);
     status = WiFi.status();
     PRINT("Disconnect: ");
     PRINTLN(status);

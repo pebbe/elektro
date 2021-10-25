@@ -23,20 +23,17 @@
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 
-unsigned long clockms = 0;
-unsigned long epoch = 0;
-unsigned clockboff = 0;
-unsigned clockboffnext = 1;
-
 int status = WL_IDLE_STATUS;
-int upcount = 0;
 char server[] = "urd2.let.rug.nl";
+
+WiFiUDP ntpUDP;
+NTPClient timeClient(ntpUDP, "fritz.box", 0, 300000); // "nl.pool.ntp.org");
+
 WiFiSSLClient client;
 
 int state = 0;
 int state_max = 4;
 
-unsigned long ms = 0;
 unsigned long t1 = 0;
 unsigned long t2 = 0;
 bool day = false;
@@ -148,6 +145,8 @@ void setup() {
     }
 #endif
 
+    connect();
+    timeClient.begin();
     dht.begin();
 }
 
@@ -169,7 +168,6 @@ void loop() {
         doDHT(2);
         break;
     }
-    disconnect();
     if (++state > state_max) {
         state = 0;
     }
@@ -233,30 +231,12 @@ void draw(char const *s) {
 
 void doClock() {
 
-    PRINTLN("doClock()");
-    if (clockms == 0) {
-        getClock();
-        if (clockms == 0) {
-            draw("*klok");
-            return;
-        }
-    }
-    unsigned long now = millis();
-    if (now < clockms) {
-        // wrap around
-        clockms = 0;
-        doClock();
-        return;
-    }
-    unsigned long diff = (now - clockms) / 1000;
-    if (diff > 43200) {
-        // resync na 12 uur
-        clockms = 0;
-        doClock();
-        return;
+    if (connect()) {
+	timeClient.update();
     }
 
-    now = epoch + diff;
+    long unsigned now = timeClient.getEpochTime();
+
     for (int i = 0; tzdata[i] != 0; i++) {
         if (tzdata[i] > now) {
             now += 3600 + 3600 * (i%2);
@@ -289,47 +269,7 @@ void doClock() {
     PRINTLN(sec);
 #endif
     draw(t.c_str());
-}
-
-void getClock() {
-
-    if (!connect()) {
-        return;
-    }
-
-    if (clockboff) {
-        PRINT("getClock() back-off: ");
-        PRINTLN(clockboff);
-        clockboff--;
-        return;
-    }
-
-    draw("?klok");
-    PRINTLN("getClock()");
-
-    WiFiUDP ntpUDP;
-    NTPClient timeClient(ntpUDP, "fritz.box"); // "nl.pool.ntp.org");
-    timeClient.begin();
-
-    unsigned long ms1, ms2;
-    ms1 = millis();
-    if (timeClient.forceUpdate()) {
-        epoch = timeClient.getEpochTime();
-        ms2 = millis();
-        clockms = ms1 / 2 + ms2 / 2;
-        clockboffnext = 1;
-        PRINTLN(timeClient.getFormattedTime());
-    } else {
-        clockboff = clockboffnext;
-        if (clockboffnext < 64) {
-            clockboffnext *= 2;
-        }
-        draw("*klok");
-        PRINT("timeClient.update() failed, back-off: ");
-        PRINTLN(clockboff);
-        delay(6000);
-    }
-    timeClient.end();
+    digitalWrite(LED, (mn == 0 || mn == 30) ? HIGH : LOW);
 }
 
 void doSun(int n) {
@@ -338,44 +278,31 @@ void doSun(int n) {
     PRINT(n);
     PRINTLN(")");
 
-    if (t1 == 0 && t2 == 0) {
-        if (!getSun()) {
-            return;
-        }
-    }
-    unsigned long now = millis();
-    if (now < ms) {
-        // wrap around
-        t1 = 0;
-        t2 = 0;
-        doSun(n);
-        return;
-    }
-    unsigned long diff = now - ms;
-    if (diff > t2) {
-        // volgende periode
-        t1 = 0;
-        t2 = 0;
-        doSun(n);
-        return;
+    long unsigned now = timeClient.getEpochTime();
+
+    if (now > t2) {
+	if (!getSun()) {
+	    return;
+	}
     }
 
     String s;
     int opt;
     if (n == 1) {
         opt = day ? 1 : 2;
-        s = format(t1 + diff);
+        s = format(now - t1);
     } else {
         opt = day ? 3 : 4;
-        s = format(t2 - diff);
+        s = format(t2 - now);
     }
-    PRINTLN(s);
+    u8g2.setContrast(day ? 100 : 30); // 0..255
     draw(s.c_str(), opt);
+    PRINTLN(s);
 }
 
 String format(unsigned long t) {
-    t += 30000; // + halve minuut
-    t /= 60000; // millis -> minuten
+    t += 30; // + halve minuut
+    t /= 60; // seconden -> minuten
     String s = String(t / 60);
     s += ".";
     unsigned long m = t % 60;
@@ -419,31 +346,34 @@ bool getSun() {
     client.println("Connection: close");
     client.println();
 
-    ms = millis();
-
     delay(1000);
     String s;
     int nl = 0;
     while (client.available()) {
         char c = client.read();
-        if (c == '\n') {
-            nl++;
-        } else if (c == '\r') {
-        } else if (nl == 1) {
-            nl = 0;
-        } else if (nl > 1) {
+	if (nl < 2) {
+	    if (c == '\n') {
+		nl++;
+	    } else if (c == '\r') {
+	    } else {
+		nl = 0;
+	    }
+        } else {
             s += c;
         }
         WRITE(c);
     }
     PRINT("Data: ");
     PRINTLN(s);
+    PRINT("Data size: ");
+    PRINTLN(s.length());
+
     if (!client.connected()) {
         PRINTLN("disconnecting from server");
         client.stop();
     }
 
-    if (s.length() < 15) {
+    if (s.length() < 132) {
         draw("*kort");
         PRINTLN("Too short");
         backoffSun();
@@ -457,17 +387,22 @@ bool getSun() {
         return false;
     }
 
-    day = s.substring(4, 5) == "1";
-    t1 = 60000 * s.substring(6, 10).toInt();
-    t2 = 60000 * s.substring(11, 15).toInt();
-
-    if (t1 == 0 && t2 == 0) {
-        backoffSun();
-        return false;
+    long unsigned now = timeClient.getEpochTime();
+    for (int i = 1; i < 8; i++) {
+	unsigned int value = s.substring(4 + i * 16, 19 + i * 16).toInt();
+	if (value > now) {
+	    t2 = value;
+	    t1 = s.substring(-12 + i * 16, 3 + i * 16).toInt();
+	    day = (i%2) == 1 ? true : false;
+	    sunboffnext = 1;
+	    return true;
+	}
     }
 
-    sunboffnext = 1;
-    return true;
+    draw("*zon");
+    PRINTLN("No value");
+    backoffSun();
+    return false;
 }
 
 void backoffSun() {
@@ -530,8 +465,6 @@ void printWifiStatus() {
 
 bool connect() {
 
-    upcount = 10;
-
     status = WiFi.status();
     if (status == WL_CONNECTED) {
         return true;
@@ -553,24 +486,8 @@ bool connect() {
         PRINT("Connecting to SSID failed");
         return false;
     }
-    digitalWrite(LED, HIGH);
     PRINTLN("Connected to WiFi");
     printWifiStatus();
     delay(2000);
     return true;
-}
-
-void disconnect() {
-    if (upcount > 0) {
-        upcount--;
-        return;
-    }
-    if (status != WL_CONNECTED) {
-        return;
-    }
-    WiFi.end();
-    digitalWrite(LED, LOW);
-    status = WiFi.status();
-    PRINT("Disconnect: ");
-    PRINTLN(status);
 }

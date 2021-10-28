@@ -17,36 +17,34 @@
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 
+#include <BME280I2C.h>
+#include <Wire.h>
+BME280I2C bme;    // Default : forced mode, standby time = 1000 ms
+                  // Oversampling = pressure ×1, temperature ×1, humidity ×1, filter off,
+
+
 #define LED 21
 
-#include "secret.h";
+#include "secret.h"
 char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 
 int status = WL_IDLE_STATUS;
-char server[] = "urd2.let.rug.nl";
+char server[] = "pkleiweg.home.xs4all.nl";
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "fritz.box", 0, 300000); // "nl.pool.ntp.org");
+NTPClient timeClient(ntpUDP, "fritz.box");  // fritz.box  ntp.xs4all.nl  nl.pool.ntp.org
 
 WiFiSSLClient client;
 
 int state = 0;
-int state_max = 4;
+int state_max = 5;
 
 unsigned long t1 = 0;
 unsigned long t2 = 0;
 bool day = false;
 unsigned sunboff = 0;
 unsigned sunboffnext = 1;
-
-#include <Adafruit_Sensor.h>
-#include <DHT.h>
-#include <DHT_U.h>
-
-#define DHTPIN  3
-#define DHTTYPE DHT11
-DHT_Unified dht(DHTPIN, DHTTYPE);
 
 #include "U8g2lib.h"
 U8G2_SH1106_128X64_NONAME_1_4W_SW_SPI u8g2(U8G2_R2, 4, 5, 6, 7);
@@ -147,7 +145,28 @@ void setup() {
 
     connect();
     timeClient.begin();
-    dht.begin();
+
+    Wire.begin();
+    draw("?sens");
+    while(!bme.begin())  {
+	PRINTLN("Could not find BME280 sensor!");
+	delay(1000);
+    }
+
+#ifdef DEBUG
+    switch(bme.chipModel())
+	{
+	case BME280::ChipModel_BME280:
+	    Serial.println("Found BME280 sensor! Success.");
+	    break;
+	case BME280::ChipModel_BMP280:
+	    Serial.println("Found BMP280 sensor! No Humidity available.");
+	    break;
+	default:
+	    Serial.println("Found UNKNOWN sensor! Error!");
+	}
+#endif
+  
 }
 
 void loop() {
@@ -162,10 +181,13 @@ void loop() {
         doSun(2);
         break;
     case 3:
-        doDHT(1);
+        doBME(1);
         break;
     case 4:
-        doDHT(2);
+        doBME(2);
+        break;
+    case 5:
+        doBME(3);
         break;
     }
     if (++state > state_max) {
@@ -178,10 +200,10 @@ void draw(char const *s, int opt) {
     u8g2.firstPage();
     do {
 	/*
-        if (status == WL_CONNECTED) {
-            u8g2.setFont(u8g2_font_open_iconic_all_2x_t);
-            u8g2.drawStr(0, 40, "\xF7");
-        }
+	  if (status == WL_CONNECTED) {
+	  u8g2.setFont(u8g2_font_open_iconic_all_2x_t);
+	  u8g2.drawStr(0, 40, "\xF7");
+	  }
 	*/
 
         u8g2.setFont(u8g2_font_logisoso34_tf);
@@ -341,8 +363,8 @@ bool getSun() {
     }
 
     PRINTLN("connected to server");
-    client.println("GET /~kleiweg/sun/bin/ HTTP/1.1");
-    client.println("Host: urd2.let.rug.nl");
+    client.println("GET /data/sun.txt HTTP/1.1");
+    client.println("Host: pkleiweg.home.xs4all.nl");
     client.println("Connection: close");
     client.println();
 
@@ -373,7 +395,7 @@ bool getSun() {
         client.stop();
     }
 
-    if (s.length() < 132) {
+    if (s.length() < 260) {
         draw("*kort");
         PRINTLN("Too short");
         backoffSun();
@@ -388,7 +410,7 @@ bool getSun() {
     }
 
     long unsigned now = timeClient.getEpochTime();
-    for (int i = 1; i < 8; i++) {
+    for (int i = 1; i < 16; i++) {
 	unsigned int value = s.substring(4 + i * 16, 19 + i * 16).toInt();
 	if (value > now) {
 	    t2 = value;
@@ -416,16 +438,29 @@ void backoffSun() {
     delay(6000);
 }
 
-void doDHT(int n) {
-    PRINT("doDHT(");
+void doBME(int n) {
+    PRINT("doBMH(");
     PRINT(n);
     PRINTLN(")");
-    sensors_event_t event;
+
+    BME280::TempUnit tempUnit(BME280::TempUnit_Celsius);
+    BME280::PresUnit presUnit(BME280::PresUnit_Pa);
+
+    float temp(NAN), hum(NAN), pres(NAN);
+    bme.read(pres, temp, hum, tempUnit, presUnit);
+
+    PRINT("Temp: ");
+    PRINT(temp);
+    PRINT("°C");
+    PRINT("\tHumidity: ");
+    PRINT(hum);
+    PRINT("% RH");
+    PRINT("\tPressure: ");
+    PRINT(pres);
+    PRINTLN("Pa");
+
     if (n == 1) {
-        dht.temperature().getEvent(&event);
-        PRINT(event.temperature);
-        PRINTLN("°");
-        int t = int(event.temperature * 10.0 + 0.5);
+	int t = int(temp * 10.0 + .5);
         String s = String(t / 10);
         s += ".";
         s += String(t % 10);
@@ -433,12 +468,24 @@ void doDHT(int n) {
         draw(s.c_str(), 5);
         return;
     }
-    dht.humidity().getEvent(&event);
-    PRINT(event.relative_humidity);
-    PRINTLN("%");
-    String s = String(int(event.relative_humidity + 0.5));
-    s += "%";
+
+    if (n == 2) {
+	/*
+	int h = int(hum * 10.0 + .5);
+	String s = String(h / 10);
+	s += ".";
+	s += String(h % 10);
+	*/
+	String s = String(int(hum + .5));
+	s += "%";
+	draw(s.c_str());
+	return;
+    }
+
+    String s = String(int(pres * .01 + .5));
+    s += "h";
     draw(s.c_str());
+
 }
 
 void printWifiStatus() {

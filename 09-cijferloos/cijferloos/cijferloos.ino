@@ -1,9 +1,9 @@
 //#define DEBUG
 
 #ifdef DEBUG
-#define PRINT(x) Serial.print(x)
+#define PRINT(x)   Serial.print(x)
 #define PRINTLN(x) Serial.println(x)
-#define WRITE(x) Serial.write(x)
+#define WRITE(x)   Serial.write(x)
 #else
 #define PRINT(x)
 #define PRINTLN(x)
@@ -24,11 +24,6 @@
 // Feather HUZZAH ESP8266 note: use pins 3, 4, 5, 12, 13 or 14 --
 // Pin 15 can work but DHT must be disconnected during program upload.
 
-#define BLUE 2
-#define GREEN 6
-#define RED 4
-#define WHITE 5
-
 // Uncomment the type of sensor in use:
 #define DHTTYPE DHT11 // DHT 11
 //#define DHTTYPE    DHT22     // DHT 22 (AM2302)
@@ -39,15 +34,36 @@
 
 DHT_Unified dht(DHTPIN, DHTTYPE);
 
-byte data[8] = {
-    0b0001,
-    0b0011,
-    0b0010,
-    0b0110,
-    0b0100,
-    0b1100,
-    0b1000,
-    0};
+#define BLUE   2
+#define GREEN  6
+#define YELLOW 4
+#define RED    5
+
+byte leds[4] = { BLUE, GREEN, YELLOW, RED };
+
+int show(int temp) {
+    PRINT(F("show("));
+    PRINT(temp);
+    PRINT(F(")\t"));
+    temp -= 15;
+    if (temp < 0) {
+	temp = 0;
+    } else if (temp > 11) {
+	temp = 11;
+    }
+    int led = leds[temp / 3];
+    int blinks = (temp % 3) + 1;
+    PRINT(temp / 3);
+    PRINT("\t");
+    PRINTLN(blinks);
+    for (int i = 0; i < blinks; i++) {
+        digitalWrite(led, HIGH);
+	delay(300);
+        digitalWrite(led, LOW);
+	delay(300);
+    }
+    return blinks * 600;
+}
 
 void setup()
 {
@@ -100,18 +116,20 @@ void setup()
     PRINTLN(F("%"));
     PRINTLN(F("------------------------------------"));
 
-    pinMode(BLUE, OUTPUT);
-    pinMode(GREEN, OUTPUT);
-    pinMode(RED, OUTPUT);
-    pinMode(WHITE, OUTPUT);
+    pinMode(BLUE,   OUTPUT);
+    pinMode(GREEN,  OUTPUT);
+    pinMode(YELLOW, OUTPUT);
+    pinMode(RED,    OUTPUT);
 
-    for (int i = 0; i < 8; i++)
+    digitalWrite(BLUE,   LOW);
+    digitalWrite(GREEN,  LOW);
+    digitalWrite(YELLOW, LOW);
+    digitalWrite(RED,    LOW);
+
+    for (int i = 15; i < 27; i++)
     {
-        digitalWrite(BLUE, data[i] & 0b0001 ? HIGH : LOW);
-        digitalWrite(GREEN, data[i] & 0b0010 ? HIGH : LOW);
-        digitalWrite(RED, data[i] & 0b0100 ? HIGH : LOW);
-        digitalWrite(WHITE, data[i] & 0b1000 ? HIGH : LOW);
-        delay(600);
+	show(i);
+	delay(700);
     }
 }
 
@@ -122,31 +140,15 @@ void loop()
     if (isnan(event.temperature))
     {
         PRINT(F("Error reading temperature!\t"));
-        digitalWrite(BLUE, LOW);
-        digitalWrite(GREEN, LOW);
         digitalWrite(RED, HIGH);
-        digitalWrite(WHITE, LOW);
-        delay(200);
+	delay(3800);
         digitalWrite(RED, LOW);
+	delay(200);
     }
     else
     {
         PRINT(event.temperature);
-        PRINT(F("°C\t"));
-        int i = event.temperature / 2.0 - 7.0;
-        PRINTLN(i);
-        if (i < 0)
-        {
-            i = 0;
-        }
-        else if (i > 6)
-        {
-            i = 6;
-        }
-        digitalWrite(BLUE, data[i] & 0b0001 ? HIGH : LOW);
-        digitalWrite(GREEN, data[i] & 0b0010 ? HIGH : LOW);
-        digitalWrite(RED, data[i] & 0b0100 ? HIGH : LOW);
-        digitalWrite(WHITE, data[i] & 0b1000 ? HIGH : LOW);
+        PRINTLN(F("°C"));
+        delay(4000 - show(event.temperature));
     }
-    delay(10000);
 }

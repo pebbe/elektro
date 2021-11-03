@@ -28,6 +28,7 @@
 
 #include <Arduino.h>
 
+// https://github.com/RobTillaart/DHTlib
 #include <dht.h>
 
 dht DHT;

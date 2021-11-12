@@ -149,22 +149,22 @@ void setup() {
     Wire.begin();
     draw("?sens");
     while(!bme.begin())  {
-	PRINTLN("Could not find BME280 sensor!");
-	delay(1000);
+        PRINTLN("Could not find BME280 sensor!");
+        delay(1000);
     }
 
 #ifdef DEBUG
     switch(bme.chipModel())
-	{
-	case BME280::ChipModel_BME280:
-	    Serial.println("Found BME280 sensor! Success.");
-	    break;
-	case BME280::ChipModel_BMP280:
-	    Serial.println("Found BMP280 sensor! No Humidity available.");
-	    break;
-	default:
-	    Serial.println("Found UNKNOWN sensor! Error!");
-	}
+        {
+        case BME280::ChipModel_BME280:
+            Serial.println("Found BME280 sensor! Success.");
+            break;
+        case BME280::ChipModel_BMP280:
+            Serial.println("Found BMP280 sensor! No Humidity available.");
+            break;
+        default:
+            Serial.println("Found UNKNOWN sensor! Error!");
+        }
 #endif
   
 }
@@ -199,30 +199,33 @@ void loop() {
 void draw(char const *s, int opt) {
     u8g2.firstPage();
     do {
-	/*
-	  if (status == WL_CONNECTED) {
-	  u8g2.setFont(u8g2_font_open_iconic_all_2x_t);
-	  u8g2.drawStr(0, 40, "\xF7");
-	  }
-	*/
+        /*
+          if (status == WL_CONNECTED) {
+          u8g2.setFont(u8g2_font_open_iconic_all_2x_t);
+          u8g2.drawStr(0, 40, "\xF7");
+          }
+        */
 
         u8g2.setFont(u8g2_font_logisoso34_tf);
-        if (opt > 0 && opt < 5) {
-            // De spatie is te breed bij dit font, dus gebruik ik een punt in doSun()
+        if (opt > 0 && opt < 5 || opt == 6) {
+            // De spatie is te breed bij dit font, dus gebruik ik een punt in doSun() en bij humidity
             // Hier in de uitvoer wordt die punt overgeslagen
+            int offset = (opt == 6) ? 1 : 2;
             char s2[10];
             strcpy(s2, s);
             int i = strlen(s2);
             int w1 = u8g2.getStrWidth(s2);
-            s2[i-3] = '\0';
-            int w2 = u8g2.getStrWidth(s2 + i - 2);
-            // w1 -= 4; // spatie nog iets smaller maken
+            s2[i-1-offset] = '\0';
+            int w2 = u8g2.getStrWidth(s2 + i - offset);
+            if (opt == 6) {
+                w1 -= 6; // spatie nog iets smaller maken
+            }
             u8g2.drawStr(64 - w1 / 2, 32 + 16, s2);
-            u8g2.drawStr(64 - w1 / 2 + w1 - w2, 32 + 16, s2 + i - 2);
+            u8g2.drawStr(64 - w1 / 2 + w1 - w2, 32 + 16, s2 + i - offset);
         } else if (opt == 5) {
-            // bij temperatuur het graden-teken niet meerekenen voor het centreren
+            // bij temperatuur het graden-teken niet helemaal meerekenen voor het centreren
             String s1 = String(s).substring(0, strlen(s) - 1);
-            u8g2.drawStr(64 - u8g2.getStrWidth(s1.c_str()) / 2, 32 + 16, s);
+            u8g2.drawStr(64 - u8g2.getStrWidth(s1.c_str()) / 2 - 4, 32 + 16, s);
         } else {
             u8g2.drawStr(64 - u8g2.getStrWidth(s) / 2, 32 + 16, s);
         }
@@ -243,6 +246,10 @@ void draw(char const *s, int opt) {
             // nacht rechts
             u8g2.drawTriangle(115, 12, 127, 12, 121, 0);
             break;
+        case 7:
+            //u8g2.drawBox(44, 0, 40, 3);
+            u8g2.drawBox(44, 60, 40, 3);
+            break;
         }
     } while( u8g2.nextPage() );
 }
@@ -254,7 +261,7 @@ void draw(char const *s) {
 void doClock() {
 
     if (connect()) {
-	timeClient.update();
+        timeClient.update();
     }
 
     long unsigned now = timeClient.getEpochTime();
@@ -303,9 +310,9 @@ void doSun(int n) {
     long unsigned now = timeClient.getEpochTime();
 
     if (now > t2) {
-	if (!getSun()) {
-	    return;
-	}
+        if (!getSun()) {
+            return;
+        }
     }
 
     String s;
@@ -317,7 +324,7 @@ void doSun(int n) {
         opt = day ? 3 : 4;
         s = format(t2 - now);
     }
-    u8g2.setContrast(day ? 100 : 30); // 0..255
+    u8g2.setContrast(day ? 100 : 20); // 0..255
     draw(s.c_str(), opt);
     PRINTLN(s);
 }
@@ -373,13 +380,13 @@ bool getSun() {
     int nl = 0;
     while (client.available()) {
         char c = client.read();
-	if (nl < 2) {
-	    if (c == '\n') {
-		nl++;
-	    } else if (c == '\r') {
-	    } else {
-		nl = 0;
-	    }
+        if (nl < 2) {
+            if (c == '\n') {
+                nl++;
+            } else if (c == '\r') {
+            } else {
+                nl = 0;
+            }
         } else {
             s += c;
         }
@@ -411,14 +418,14 @@ bool getSun() {
 
     long unsigned now = timeClient.getEpochTime();
     for (int i = 1; i < 16; i++) {
-	unsigned int value = s.substring(4 + i * 16, 19 + i * 16).toInt();
-	if (value > now) {
-	    t2 = value;
-	    t1 = s.substring(-12 + i * 16, 3 + i * 16).toInt();
-	    day = (i%2) == 1 ? true : false;
-	    sunboffnext = 1;
-	    return true;
-	}
+        unsigned int value = s.substring(4 + i * 16, 19 + i * 16).toInt();
+        if (value > now) {
+            t2 = value;
+            t1 = s.substring(-12 + i * 16, 3 + i * 16).toInt();
+            day = (i%2) == 1 ? true : false;
+            sunboffnext = 1;
+            return true;
+        }
     }
 
     draw("*zon");
@@ -460,7 +467,7 @@ void doBME(int n) {
     PRINTLN("Pa");
 
     if (n == 1) {
-	int t = int(temp * 10.0 + .5);
+        int t = int(temp * 10.0 + .5);
         String s = String(t / 10);
         s += ".";
         s += String(t % 10);
@@ -470,21 +477,20 @@ void doBME(int n) {
     }
 
     if (n == 2) {
-	/*
-	int h = int(hum * 10.0 + .5);
-	String s = String(h / 10);
-	s += ".";
-	s += String(h % 10);
-	*/
-	String s = String(int(hum + .5));
-	s += "%";
-	draw(s.c_str());
-	return;
+        /*
+          int h = int(hum * 10.0 + .5);
+          String s = String(h / 10);
+          s += ".";
+          s += String(h % 10);
+        */
+        String s = String(int(hum + .5));
+        s += ".%";
+        draw(s.c_str(), 6);
+        return;
     }
 
     String s = String(int(pres * .01 + .5));
-    s += "h";
-    draw(s.c_str());
+    draw(s.c_str(), 7);
 
 }
 

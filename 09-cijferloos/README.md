@@ -8,7 +8,7 @@
  
  DHT11 van CNT5 
 
-|    |    |
+| label | type |
 |----|----|
 | S  | DHT11 |
 | IC | ATtiny85 |

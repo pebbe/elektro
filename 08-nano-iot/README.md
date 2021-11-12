@@ -94,3 +94,15 @@ VMA437 met chip SH1106
 // SW SPI Com: SCK = 4, MOSI = 5, CS = 6, A0 = 7
 U8G2_SH1106_128X64_NONAME_1_4W_SW_SPI u8g2(U8G2_R2, 4, 5, 6, 7);
 ```
+
+### Sensor
+
+VMA335 met chip BME280
+
+| sensor | Nano |
+| ------ | ---- |
+| Vin    | +3V3 |
+| Gnd    | GND  |
+| SDA    | A4   |
+| SCL    | A5   |
+

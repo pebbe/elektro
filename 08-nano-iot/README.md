@@ -27,7 +27,7 @@ waardes zien.
 
 De hoeveelheid licht dat de letters op het display standaard geven is
 aardig sterk, te veel voor nachtelijk gebruik. De maximale waarde voor
-helderheid is 255. Ik gebruik nu 's nachts de waarde 30, en overdag 100.
+helderheid is 255. Ik gebruik nu 's nachts de waarde 20, en overdag 100.
 
 De tijd wordt gesynchroniseerd via NTP. De tijd wordt opgevraagd van
 m'n modem die tevens router en NTP-server is.

@@ -16,6 +16,7 @@
 #include <WiFiNINA.h>
 #include <WiFiUdp.h>
 #include <NTPClient.h>
+#include <PubSubClient.h>
 
 #include <BME280I2C.h>
 #include <Wire.h>
@@ -37,8 +38,17 @@ NTPClient timeClient(ntpUDP, "fritz.box");  // fritz.box  ntp.xs4all.nl  nl.pool
 
 WiFiSSLClient client;
 
+WiFiClient plainClient;
+
+PubSubClient mqttClient(plainClient);
+
 int state = 0;
 int state_max = 5;
+
+long unsigned now;
+long unsigned nowT = 0;
+long unsigned nowH = 0;
+long unsigned nowP = 0;
 
 unsigned long t1 = 0;
 unsigned long t2 = 0;
@@ -166,10 +176,28 @@ void setup() {
             Serial.println("Found UNKNOWN sensor! Error!");
         }
 #endif
-  
+
+
+    mqttClient.setServer("192.168.178.29", 1883);
+}
+
+bool mqttConnect() {
+    if (mqttClient.connected()) {
+        return true;
+    }
+    if (mqttClient.connect("id08" /* , MQTT_USER, MQTT_PASS */)) {
+        PRINTLN("MQTT connection established");
+        // Establish the subscribe event
+        //mqttClient.setCallback(subscribeReceive);
+        return true;
+    }
+    PRINTLN("MQTT connection failed");
+    return false;
 }
 
 void loop() {
+    mqttClient.loop();
+
     switch (state) {
     case 0:
         doClock();
@@ -264,7 +292,7 @@ void doClock() {
         timeClient.update();
     }
 
-    long unsigned now = timeClient.getEpochTime();
+    now = timeClient.getEpochTime();
 
     for (int i = 0; tzdata[i] != 0; i++) {
         if (tzdata[i] > now) {
@@ -473,6 +501,10 @@ void doBME(int n) {
         s += String(t % 10);
         s += "\xB0";
         draw(s.c_str(), 5);
+        if (now - nowT > 600) {
+            nowT = now;
+            pub("boven/temp", t);
+        }
         return;
     }
 
@@ -486,12 +518,37 @@ void doBME(int n) {
         String s = String(int(hum + .5));
         s += ".%";
         draw(s.c_str(), 6);
+        if (now - nowH > 600) {
+            nowH = now;
+            pub("boven/hum", int(hum * 10.0 + .5));
+        }
         return;
     }
 
     String s = String(int(pres * .01 + .5));
     draw(s.c_str(), 7);
+    if (now - nowP > 600) {
+        nowP = now;
+        pub("boven/pres", int(pres * .1 + .5));
+    }
+}
 
+void pub(char const *s, int i) {
+    if (!mqttConnect()) {
+        return;
+    }
+
+    String m = String(i);
+    PRINT("MQTT pub ");
+    PRINT(s);
+    PRINT(" ");
+    PRINT(m);
+    PRINT(" ... ");
+    if(mqttClient.publish(s, m.c_str(), true)) {
+        PRINTLN("OK");
+    } else {
+        PRINTLN("FAIL");
+    }
 }
 
 void printWifiStatus() {

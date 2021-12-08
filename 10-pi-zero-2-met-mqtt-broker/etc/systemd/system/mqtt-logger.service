@@ -1,0 +1,10 @@
+[Unit]
+After=mosquitto.service
+
+[Service]
+User=ubuntu
+Group=ubuntu
+ExecStart=/home/ubuntu/mqtt/logger.sh
+
+[Install]
+WantedBy=default.target

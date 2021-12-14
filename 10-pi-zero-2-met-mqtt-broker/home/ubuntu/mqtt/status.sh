@@ -19,5 +19,7 @@ do
     mosquitto_pub -r -t raspi/temp/cpu -m "`perl -p -e 's!.*!sprintf("%.1f°C", $& / 1000.0)!e' /sys/class/thermal/thermal_zone0/temp`"
     sleep 2
     mosquitto_pub -r -t raspi/temp/gpu -m "`vcgencmd measure_temp | perl -p -e 's/.*?([0-9][0-9.]*).*/$1°C/'`"
-    sleep 48
+    sleep 2
+    mosquitto_pub -r -t raspi/wifi/signal -m "`iwconfig wlan0 | perl -n -e 'if (/Signal level=(.*)/) { print "$1\n"; }'`"
+    sleep 46
 done

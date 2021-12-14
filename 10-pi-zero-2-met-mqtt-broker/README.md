@@ -60,6 +60,8 @@ geheugengebruik, temperatuur van de processor, etc.
 
 ### Rapsberry Pi Zero 2 W: Set-up
 
+Algemene instructies: [How to install Ubuntu Server on your Raspberry Pi](https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi)
+
 Als besturingssysteem op de Pi Zero 2 gebruik ik Ubuntu Server. Ik
 gebruik de 64-bits versie zodat ik ook Go-programma's kan draaien, die
 je trouwens gewoon op je PC kunt compileren, dankzij de

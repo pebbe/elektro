@@ -16,7 +16,7 @@ apparaat dat heel weinig energie verbruikt.
 Ik wilde een [Rasberry Pi 4B](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/) gebruiken. Die is al een flinke tijd voor
 me in bestelling. Nog steeds niet gearriveerd. Nergens leverbaar. De
 vraag is veel groter dan het aanbod. Gelukkig wist ik m'n hand te
-leggen op een [Raspberry Pi Zero 2 W](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/).
+leggen op een [Raspberry Pi Zero 2](https://www.raspberrypi.com/products/raspberry-pi-zero-2-w/).
 
 Een Raspberry met Ubuntu Server 64bits, en daar dan [Mosquitto](https://mosquitto.org/) op
 draaien (een *broker* voor [MQTT](https://mqtt.org/)), [InfluxDB](https://www.influxdata.com/products/influxdb/) (een *time series database*),
@@ -58,7 +58,7 @@ En de Pi stuurt meetgegevens over zichzelf naar zichzelf, over
 geheugengebruik, temperatuur van de processor, etc.
 
 
-### Rapsberry Pi Zero 2 W: Set-up
+### Rapsberry Pi Zero 2: Set-up
 
 Algemene instructies: [How to install Ubuntu Server on your Raspberry Pi](https://ubuntu.com/tutorials/how-to-install-ubuntu-on-your-raspberry-pi)
 

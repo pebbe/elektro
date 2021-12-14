@@ -50,8 +50,8 @@ breed wordt ondersteund, waarmee je makkelijk data-bronnen en
 data-gebruikers aan elkaar kunt koppelen. Alles gaat via een centraal
 punt, de broker, die bij mij op de Pi draait (Mosquitto). Bronnen sturen data
 daarheen zonder zich verder hoeven te bekommeren om waar de data
-uiteindelijk heen moet om gebruikt te worden. M'n Nano IoT uit project
-08 stuurt de gegevens van de weersensor daarheen. M'n PC en m'n tablet
+uiteindelijk heen moet om gebruikt te worden. M'n Nano IoT uit [project
+08](../08-nano-iot/) stuurt de gegevens van de weersensor daarheen. M'n PC en m'n tablet
 sturen allebei gegevens over wanneer het scherm aan is, zodat ik
 inzicht krijg ik m'n schermgebruik (dat blijkt meer dan verstandig).
 En de Pi stuurt meetgegevens over zichzelf naar zichzelf, over

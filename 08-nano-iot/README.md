@@ -3,6 +3,7 @@
 M'n eerste project met een microcontroller met toegang tot het
 internet. Nog geen echte IoT-toepassing. Er wordt geen data opgeslagen
 via het internet. De verbinding is er alleen om gegevens op te vragen.
+(EDIT: Inmiddels wel. Zie project 10.)
 
 Ik had een ESP32 kunnen gebruiken, maar ik koos voor de drie keer zo
 dure Arduino Nano 33 IoT. Ik dacht, met een echte Arduino loop ik
@@ -65,6 +66,7 @@ weergegeven.
  * [NTPClient](https://github.com/arduino-libraries/NTPClient)  → NTPClient
  * [BME280](https://github.com/finitespace/BME280)  → sensor
  * [u8g2](https://github.com/olikraus/u8g2)  → display
+ * [PubSubClient](https://pubsubclient.knolleary.net/) → dataopslag via MQTT
 
 
 ### Docs

@@ -23,7 +23,11 @@ Technieken
 
 Soorten controllers
 
+ * [Developer boards bij Okaphone](http://www.okaphone.com/groep.asp?id=726)
  * M5Paper
+ * [ESP32](https://en.wikipedia.org/wiki/ESP32)
+     * [Programming](https://en.wikipedia.org/wiki/ESP32#Programming)
+     * [Start using the ESP32 microcontroller to build your own IoT project](https://www.youtube.com/playlist?list=PLzvRQMJ9HDiQ3OIuBWCEW6yE0S0LUWhGU) (Youtube playlist)
 
 ## Ontwikkeling
 
@@ -55,6 +59,7 @@ Waardes voor:
 
 Toepassingen:
 
+ * Zelf een buitensensor maken
  * Opvangen van signaal van kant-en-klaar buitensensor voor weerstation
      * [Making it rain with software defined radio](https://spuriousemissions.com/making-it-rain-with-software-defined-radio/)
 
@@ -64,16 +69,18 @@ Toepassingen:
  * Wifi
  * Bluetooth
  * Infrarood
+     * Tester voor afstandsbediening
  * Lorawan
  * RX/TX op 433Mhz
      * [zend en ontvangstmodule](https://www.okaphone.com/artikel.asp?id=488915)
+ * [DCF77 tijdsignaal](https://nl.wikipedia.org/wiki/DCF77)
 
 
 ## Bouwpakketten
 
  * [Vleermuisdetector (WSA) (K8118 Whadda)](http://www.okaphone.com/artikel.asp?id=484198)
- * [Super Stereo Oor (WSAH136)](http://www.okaphone.com/artikel.asp?id=252)
- * [Elektronische krekel](http://www.okaphone.com/artikel.asp?id=224)
+ * [Super Stereo Oor (WSAH136) (MK136 Velleman)](http://www.okaphone.com/artikel.asp?id=252)
+ * [Elektronische krekel (MK104 Velleman)](http://www.okaphone.com/artikel.asp?id=224)
 
 ## SDR
 

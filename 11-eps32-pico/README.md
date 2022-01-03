@@ -7,6 +7,7 @@ This chip has 2 cores
 Chip ID: 8437860
 ```
 
+https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-pico-kit.html
 
 ### Platforms
 
@@ -43,3 +44,8 @@ Voor elk platform, iets wat volgende dingen tegelijk doet:
 
 
 Timezone Amsterdam: `CET-1CEST,M3.5.0/2,M10.5.0/3`
+
+### Library's
+
+ * [ESP32 AnalogWrite](https://github.com/ERROPiX/ESP32_AnalogWrite)
+ * [PubSubClient](https://pubsubclient.knolleary.net/)

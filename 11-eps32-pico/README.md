@@ -12,8 +12,6 @@ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/g
 ### Platforms
 
  * Arduino — C++
-     * Arduino IDE
-     * PlatformIO
  * Espressif — C
      * https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-pico-kit.html
  * NodeMCU — Lua

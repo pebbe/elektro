@@ -44,8 +44,3 @@ Voor elk platform, iets wat volgende dingen tegelijk doet:
 
 
 Timezone Amsterdam: `CET-1CEST,M3.5.0/2,M10.5.0/3`
-
-### Library's
-
- * [ESP32 AnalogWrite](https://github.com/ERROPiX/ESP32_AnalogWrite)
- * [PubSubClient](https://pubsubclient.knolleary.net/)

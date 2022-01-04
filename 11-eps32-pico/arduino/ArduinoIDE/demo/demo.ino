@@ -35,6 +35,7 @@ WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "fritz.box");  // fritz.box  ntp.xs4all.nl  nl.pool.ntp.org
 
 void callback(char* topic, byte* payload, unsigned int length);
+char const *flashmode(FlashMode_t mode);
 
 WiFiClient plainClient;
 const char *server = "rpi-zero-2.fritz.box";
@@ -44,12 +45,15 @@ int blinkStep = 1;
 int blinkDelay = 5;
 bool blinkOn = false;
 int clockStep = 1;
-int clockDelay = 10;
+int clockDelay = 200;
 int ledLevel = 64;
 int ledLevelNow = -1;
 
 void setup()
 {
+    pinMode(LEDRED, OUTPUT);
+    pinMode(LEDBLUE, OUTPUT);
+    pinMode(LEDYELLOW, OUTPUT);
 
 #ifdef DEBUG
     Serial.begin(115200);
@@ -57,18 +61,35 @@ void setup()
         ;
 #endif
 
-    pinMode(LEDRED, OUTPUT);
-    pinMode(LEDBLUE, OUTPUT);
-    pinMode(LEDYELLOW, OUTPUT);
+    uint32_t chipId = 0;
+    for(int i=0; i<17; i=i+8) {
+        chipId |= ((ESP.getEfuseMac() >> (40 - i)) & 0xff) << i;
+    }
+    PRINTF("ESP32 Chip model = %s Rev %d\n", ESP.getChipModel(), ESP.getChipRevision());
+    PRINTF("This chip has %d cores\n", ESP.getChipCores());
+    PRINTF("Chip ID: %lu\n", chipId);
+    PRINTF("CPU frequency: %lu MHz\n", ESP.getCpuFreqMHz());
+    PRINTF("Cycle count: %lu\n", ESP.getCycleCount());
+    PRINTF("SDK Version: %s\n", ESP.getSdkVersion());
+    PRINTLN("Internal RAM");
+    PRINTF("    Heap Size: %lu\n", ESP.getHeapSize());
+    PRINTF("    Free Heap: %lu\n", ESP.getFreeHeap());
+    PRINTF("    Min Free Heap: %lu\n", ESP.getMinFreeHeap());
+    PRINTF("    Max Alloc Heap: %lu\n", ESP.getMaxAllocHeap());
+    PRINTLN("Flash Chip");
+    PRINTF("    Size: %lu\n", ESP.getFlashChipSize());
+    PRINTF("    Speed: %lu\n", ESP.getFlashChipSpeed());
+    PRINTF("    Mode: %s\n", flashmode(ESP.getFlashChipMode()));
+    PRINTF("Sketch Size: %lu\n", ESP.getSketchSize());
+    PRINTF("Free Sketch Space: %lu\n", ESP.getFreeSketchSpace());
 
     // connect to WiFi
     PRINTF("Connecting to %s ", ssid);
     WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED)
-        {
-            delay(500);
-            PRINT(".");
-        }
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        PRINT(".");
+    }
     PRINTLN(" CONNECTED");
 
     setenv("TZ", "CET-1CEST,M3.5.0/2,M10.5.0/3", 1);
@@ -149,4 +170,17 @@ void callback(char* topic, byte* payload, unsigned int length)
         ledLevel = v;
     }
 
+}
+
+char const *flashmode(FlashMode_t mode)
+{
+    switch (mode) {
+    case FM_QIO: return "QIO";
+    case FM_QOUT: return "QOUT";
+    case FM_DIO: return "DIO";
+    case FM_DOUT: return "DOUT";
+    case FM_FAST_READ: return "FAST_READ";
+    case FM_SLOW_READ: return "SLOW_READ";
+    }
+    return "UNKNOWN";
 }

@@ -5,12 +5,10 @@
 #define PRINT(x) Serial.print(x)
 #define PRINTLN(x) Serial.println(x)
 #define PRINTF(...) Serial.printf(__VA_ARGS__)
-#define WRITE(x) Serial.write(x)
 #else
 #define PRINT(x)
 #define PRINTLN(x)
 #define PRINTF(...)
-#define WRITE(x)
 #endif
 
 #define LEDRED 25
@@ -110,7 +108,6 @@ void setup()
 
 void loop()
 {
-
     mqttClient.loop();
 
     if (--clockStep <= 0) {
@@ -169,18 +166,23 @@ void callback(char* topic, byte* payload, unsigned int length)
             v = 255;
         ledLevel = v;
     }
-
 }
 
 char const *flashmode(FlashMode_t mode)
 {
     switch (mode) {
-    case FM_QIO: return "QIO";
-    case FM_QOUT: return "QOUT";
-    case FM_DIO: return "DIO";
-    case FM_DOUT: return "DOUT";
-    case FM_FAST_READ: return "FAST_READ";
-    case FM_SLOW_READ: return "SLOW_READ";
+    case FM_QIO:
+        return "QIO";
+    case FM_QOUT:
+        return "QOUT";
+    case FM_DIO:
+        return "DIO";
+    case FM_DOUT:
+        return "DOUT";
+    case FM_FAST_READ:
+        return "FAST_READ";
+    case FM_SLOW_READ:
+        return "SLOW_READ";
     }
     return "UNKNOWN";
 }

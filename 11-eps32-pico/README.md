@@ -13,7 +13,6 @@ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/g
 
  * Arduino — C++
  * Espressif — C
-     * https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-pico-kit.html
  * NodeMCU — Lua
      * https://nodemcu.readthedocs.io/en/dev-esp32/
      * https://nodemcu.readthedocs.io/
@@ -27,6 +26,8 @@ https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/g
      * https://codewith.mu/
  * Mongoose OS — JavaScript, C
      * https://mongoose-os.com/
+ * Zephyr
+     * https://www.zephyrproject.org/
 
 ### Taken
 

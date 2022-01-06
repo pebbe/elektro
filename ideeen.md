@@ -5,6 +5,7 @@
      * [Magic Picture of Storm at Sea](https://www.hackster.io/lincolnstein/magic-picture-of-storm-at-sea-ce0d47)
  * Figuratief
      * [Mohit Bhoite — Sculptures](https://www.bhoite.com/sculptures/)
+ * Nestkastje met camera
 
 ## Elektronica zonder controllers
 
@@ -33,6 +34,7 @@ Soorten controllers
 
 ## Ontwikkeling
 
+ * FreeRTOS op de EPS32
  * [PlatformIO](https://docs.platformio.org/en/latest/integration/ide/vscode.html)
 
 ## Vaardigheden

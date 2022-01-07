@@ -8,6 +8,7 @@
 #include "esp_event.h"
 #include "esp_log.h"
 #include "nvs_flash.h"
+#include "mqtt_client.h"
 
 #include "lwip/err.h"
 #include "lwip/sys.h"
@@ -31,14 +32,15 @@ static EventGroupHandle_t s_wifi_event_group;
 #define WIFI_CONNECTED_BIT BIT0
 #define WIFI_FAIL_BIT      BIT1
 
-static const char *TAG = "wifi station";
+static const char *WIFITAG = "wifi station";
+static const char *MQTTTAG = "mqtt client";
 
 static int s_retry_num = 0;
 
 static QueueHandle_t blinkQueue;
-//static TaskHandle_t blinkHandle = NULL;
 
-void blink() {
+
+void blink(void *not_used) {
     int period = 1000 / portTICK_PERIOD_MS;
     bool blinkOn = true;
     int value;
@@ -56,7 +58,7 @@ void blink() {
     }
 }
 
-static void event_handler(void* arg, esp_event_base_t event_base,
+static void wiki_event_handler(void* arg, esp_event_base_t event_base,
 			  int32_t event_id, void* event_data)
 {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
@@ -65,14 +67,14 @@ static void event_handler(void* arg, esp_event_base_t event_base,
         if (s_retry_num < EXAMPLE_ESP_MAXIMUM_RETRY) {
             esp_wifi_connect();
             s_retry_num++;
-            ESP_LOGI(TAG, "retry to connect to the AP");
+            ESP_LOGI(WIFITAG, "retry to connect to the AP");
         } else {
             xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
         }
-        ESP_LOGI(TAG,"connect to the AP fail");
+        ESP_LOGI(WIFITAG,"connect to the AP fail");
     } else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
         ip_event_got_ip_t* event = (ip_event_got_ip_t*) event_data;
-        ESP_LOGI(TAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
+        ESP_LOGI(WIFITAG, "got ip:" IPSTR, IP2STR(&event->ip_info.ip));
         s_retry_num = 0;
         xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
     }
@@ -94,12 +96,12 @@ void wifi_init_sta(void)
     esp_event_handler_instance_t instance_got_ip;
     ESP_ERROR_CHECK(esp_event_handler_instance_register(WIFI_EVENT,
                                                         ESP_EVENT_ANY_ID,
-                                                        &event_handler,
+                                                        &wiki_event_handler,
                                                         NULL,
                                                         &instance_any_id));
     ESP_ERROR_CHECK(esp_event_handler_instance_register(IP_EVENT,
                                                         IP_EVENT_STA_GOT_IP,
-                                                        &event_handler,
+                                                        &wiki_event_handler,
                                                         NULL,
                                                         &instance_got_ip));
 
@@ -122,10 +124,10 @@ void wifi_init_sta(void)
     ESP_ERROR_CHECK(esp_wifi_set_config(WIFI_IF_STA, &wifi_config) );
     ESP_ERROR_CHECK(esp_wifi_start() );
 
-    ESP_LOGI(TAG, "wifi_init_sta finished.");
+    ESP_LOGI(WIFITAG, "wifi_init_sta finished.");
 
     /* Waiting until either the connection is established (WIFI_CONNECTED_BIT) or connection failed for the maximum
-     * number of re-tries (WIFI_FAIL_BIT). The bits are set by event_handler() (see above) */
+     * number of re-tries (WIFI_FAIL_BIT). The bits are set by wiki_event_handler() (see above) */
     EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
 					   WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
 					   pdFALSE,
@@ -135,19 +137,69 @@ void wifi_init_sta(void)
     /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
      * happened. */
     if (bits & WIFI_CONNECTED_BIT) {
-        ESP_LOGI(TAG, "connected to ap SSID:%s",
+        ESP_LOGI(WIFITAG, "connected to ap SSID:%s",
                  EXAMPLE_ESP_WIFI_SSID);
     } else if (bits & WIFI_FAIL_BIT) {
-        ESP_LOGI(TAG, "Failed to connect to SSID:%s",
+        ESP_LOGI(WIFITAG, "Failed to connect to SSID:%s",
                  EXAMPLE_ESP_WIFI_SSID);
     } else {
-        ESP_LOGE(TAG, "UNEXPECTED EVENT");
+        ESP_LOGE(WIFITAG, "UNEXPECTED EVENT");
     }
 
     /* The event will not be processed after unregister */
     ESP_ERROR_CHECK(esp_event_handler_instance_unregister(IP_EVENT, IP_EVENT_STA_GOT_IP, instance_got_ip));
     ESP_ERROR_CHECK(esp_event_handler_instance_unregister(WIFI_EVENT, ESP_EVENT_ANY_ID, instance_any_id));
     vEventGroupDelete(s_wifi_event_group);
+}
+
+static void mqtt_event_connected(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
+{
+    esp_mqtt_event_handle_t event = event_data;
+    esp_mqtt_client_handle_t client = event->client;
+
+    // TODO: send datetime
+    esp_mqtt_client_publish(client, "esp32/demo11/up", "up!", 0, 1, 1);
+
+    esp_mqtt_client_subscribe(client, "esp32/demo11/blink", 1);
+    esp_mqtt_client_subscribe(client, "esp32/demo11/level", 1);
+}
+
+static void mqtt_event_data(void *handler_args, esp_event_base_t base, int32_t event_id, void *event_data)
+{
+    esp_mqtt_event_handle_t event = event_data;
+    int tn = event->topic_len;
+    int dn = event->data_len;
+    char topic[tn + 1];
+    char data[dn + 1];
+
+    strncpy(topic, event->topic, tn);
+    strncpy(data, event->data, dn);
+    topic[tn] = '\0';
+    data[dn] = '\0';
+    int i = atoi(data);
+    if (!strcmp(topic, "esp32/demo11/blink")) {
+	esp_err_t ret = xQueueSendToBack(blinkQueue, (void *) &i, (TickType_t) 0);
+	if (ret != pdPASS) {
+	    ESP_ERROR_CHECK(ret);
+	}
+    } else if (!strcmp(topic, "esp32/demo11/level")) {
+	// TODO: set pwm
+    }
+}
+
+void mqtt_start(void) {
+    esp_mqtt_client_config_t mqtt_cfg = {
+        .uri = "mqtt://rpi-zero-2.fritz.box:1883",
+	.lwt_topic = "esp32/demo11/up",
+	.lwt_msg = "----",
+	.lwt_qos = 1,
+	.lwt_retain = 1,
+    };
+
+    esp_mqtt_client_handle_t client = esp_mqtt_client_init(&mqtt_cfg);
+    esp_mqtt_client_register_event(client, MQTT_EVENT_CONNECTED, mqtt_event_connected, NULL);
+    esp_mqtt_client_register_event(client, MQTT_EVENT_DATA, mqtt_event_data, NULL);
+    esp_mqtt_client_start(client);
 }
 
 void app_main(void)
@@ -179,9 +231,8 @@ void app_main(void)
     printf("Minimum free heap size: %d bytes\n", esp_get_minimum_free_heap_size());
     fflush(stdout);
 
-    
     // Start WiFi
-    ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
+    ESP_LOGI(WIFITAG, "ESP_WIFI_MODE_STA");
     wifi_init_sta();
 
     blinkQueue = xQueueCreate(10, sizeof(int));
@@ -189,4 +240,7 @@ void app_main(void)
     if (bt != pdPASS) {
 	ESP_ERROR_CHECK(bt);
     }
+
+    ESP_LOGI(MQTTTAG, "MQTT_START");
+    mqtt_start();
 }

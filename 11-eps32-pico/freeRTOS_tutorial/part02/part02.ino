@@ -13,9 +13,9 @@ void toggleLED(void *parameter) {
   int i = *((int *)parameter);
   for (;;) {
     digitalWrite(led_pin[i], HIGH);
-    vTaskDelay((200 * i + 500) / portTICK_PERIOD_MS);
+    vTaskDelay((10 * i + 500) / portTICK_PERIOD_MS);
     digitalWrite(led_pin[i], LOW);
-    vTaskDelay((200 * i + 500) / portTICK_PERIOD_MS);
+    vTaskDelay((10 * i + 500) / portTICK_PERIOD_MS);
   }
 }
 

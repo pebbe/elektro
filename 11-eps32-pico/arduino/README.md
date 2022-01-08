@@ -2,6 +2,7 @@
 ### API
 
  * [ESP32 Arduino](https://docs.espressif.com/projects/arduino-esp32/en/latest/)
+ * [Hardware Abstraction Layer](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-guides/hardware-abstraction.html) (ledc)
 
 ### Tutorials
 

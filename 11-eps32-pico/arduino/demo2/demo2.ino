@@ -179,7 +179,7 @@ void setup()
     PRINTF("Connecting to %s ", ssid);
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
+	vTaskDelay(500 / portTICK_PERIOD_MS);
         PRINT(".");
     }
     PRINTLN(" CONNECTED");
@@ -194,7 +194,7 @@ void setup()
     sntp_init();
 
     while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED)
-        delay(10);
+	vTaskDelay(10 / portTICK_PERIOD_MS);
     int i = 1;
     xQueueSendToBack(timeQueue, (void *) &i, (TickType_t) 0);
 
@@ -214,6 +214,6 @@ void loop()
            t->tm_hour, t->tm_min, t->tm_sec,
            t->tm_isdst ? "CEST" : "CET");
 
-    delay(2000);
+    vTaskDelay(20000 / portTICK_PERIOD_MS);
 }
 

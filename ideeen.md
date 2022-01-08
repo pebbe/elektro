@@ -66,7 +66,8 @@ Toepassingen:
  * Zelf een buitensensor maken
  * Opvangen van signaal van kant-en-klaar buitensensor voor weerstation
      * [Making it rain with software defined radio](https://spuriousemissions.com/making-it-rain-with-software-defined-radio/)
-
+     * [rtl_433](https://github.com/merbanan/rtl_433)
+     * [video: How to Hack your 433 MHz Devices](https://www.youtube.com/watch?v=L0fSEbGEY-Q)
 
 ## Remote
 
@@ -77,6 +78,11 @@ Toepassingen:
  * Lorawan
  * RX/TX op 433Mhz
      * [zend en ontvangstmodule](https://www.okaphone.com/artikel.asp?id=488915)
+ * RF24
+     * [video: nRF24L01 Send (and receive) data with your Arduino](https://www.youtube.com/watch?v=JSHJ-RLbNJk)
+     * [module voor RF communicatie](https://www.okaphone.com/artikel.asp?id=483444)
+     * [draadloze transciever module](https://www.okaphone.com/artikel.asp?id=487118)
+     * [Adapter Module](https://www.okaphone.com/artikel.asp?id=491642) — Een module om de NRF24L01+ aan te sluiten op een 5 volt microcontroller.
  * [DCF77 tijdsignaal](https://nl.wikipedia.org/wiki/DCF77)
 
 

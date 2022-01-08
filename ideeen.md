@@ -44,7 +44,7 @@ Soorten controllers
      * Hot glue
      * 3D-printer
  * Oscilloscoop
- 
+     * [Parts-Bin Oscilloscope](https://www.hackster.io/ignoramus-pettigrew-the-third/parts-bin-oscilloscope-c8a413) (zelfbouw met tablet)
 
 ## Server
 
@@ -58,6 +58,7 @@ Waardes voor:
  * Luchtvochtigheid (binnen en buiten)
  * Luchtdruk
  * CO₂
+     * [Adafruit SCD-40 - True CO2, Temperature and Humidity Sensor](https://www.adafruit.com/product/5187)
  * Fijnstof
  * Overigen luchtkwaliteit
 
@@ -91,6 +92,10 @@ Toepassingen:
  * [Vleermuisdetector (WSA) (K8118 Whadda)](http://www.okaphone.com/artikel.asp?id=484198)
  * [Super Stereo Oor (WSAH136) (MK136 Velleman)](http://www.okaphone.com/artikel.asp?id=252)
  * [Elektronische krekel (MK104 Velleman)](http://www.okaphone.com/artikel.asp?id=224)
+
+## Hardwarespeeltjes
+
+ * [Adafruit MacroPad RP2040 Starter Kit - 3x4 Keys + Encoder + OLED](https://www.adafruit.com/product/5128)
 
 ## SDR
 

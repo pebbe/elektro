@@ -5,6 +5,8 @@
      * [Magic Picture of Storm at Sea](https://www.hackster.io/lincolnstein/magic-picture-of-storm-at-sea-ce0d47)
  * Figuratief
      * [Mohit Bhoite — Sculptures](https://www.bhoite.com/sculptures/)
+     * [hackaday /tag/circuit-sculpture](https://hackaday.com/tag/circuit-sculpture/)
+     * [instructables /art/projects](https://www.instructables.com/circuits/art/projects/)
  * Nestkastje met camera
 
 ## Elektronica zonder controllers
@@ -69,6 +71,8 @@ Toepassingen:
      * [Making it rain with software defined radio](https://spuriousemissions.com/making-it-rain-with-software-defined-radio/)
      * [rtl_433](https://github.com/merbanan/rtl_433)
      * [video: How to Hack your 433 MHz Devices](https://www.youtube.com/watch?v=L0fSEbGEY-Q)
+     * [Universal Radio Hacker](https://github.com/jopohl/urh)
+     * [/tag/rtl_433/](https://www.rtl-sdr.com/tag/rtl_433/)
 
 ## Remote
 

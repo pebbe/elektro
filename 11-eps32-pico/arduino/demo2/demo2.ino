@@ -58,12 +58,12 @@ static void mqtt_event_connected(void *handler_args, esp_event_base_t base, int3
 {
     esp_mqtt_event_handle_t event = (esp_mqtt_event_handle_t) event_data;
     esp_mqtt_client_handle_t client = event->client;
-                                         
+
     esp_mqtt_client_publish(client, TOPIC_UP, "up!", 0, 1, 1);
- 
+
     esp_mqtt_client_subscribe(client, TOPIC_BLINK, 1);
     esp_mqtt_client_subscribe(client, TOPIC_LEVEL, 1);
-                                         
+
     int i;
     while (xQueueReceive(timeQueue, &i, 100) != pdTRUE)
         ;
@@ -82,7 +82,7 @@ static void mqtt_event_data(void *handler_args, esp_event_base_t base, int32_t e
     int dn = event->data_len;
     char topic[tn + 1];
     char data[dn + 1];
-    
+
     strncpy(topic, event->topic, tn);
     strncpy(data, event->data, dn);
     topic[tn] = '\0';
@@ -97,11 +97,10 @@ static void mqtt_event_data(void *handler_args, esp_event_base_t base, int32_t e
             i = 0;
         if (i > 255)
             i = 255;
-
-        ledcWrite(0, i);
+        analogWrite(LEDYELLOW, i);
     }
 }
-    
+
 esp_mqtt_client_config_t mqtt_cfg;
 void mqtt_start(void) {
     mqtt_cfg.uri = "mqtt://rpi-zero-2.fritz.box:1883";
@@ -139,14 +138,11 @@ void setup()
 {
     pinMode(LEDRED, OUTPUT);
     pinMode(LEDBLUE, OUTPUT);
-    //pinMode(LEDYELLOW, OUTPUT);
+    pinMode(LEDYELLOW, OUTPUT); // niet nodig?
 
-    ledcSetup(0, 5000, 8);
-    ledcAttachPin(LEDYELLOW, 0);
-    
     blinkQueue = xQueueCreate(10, sizeof(int));
     timeQueue = xQueueCreate(1, sizeof(int));
-    
+
 #ifdef DEBUG
     Serial.begin(115200);
     while (!Serial)
@@ -179,22 +175,22 @@ void setup()
     PRINTF("Connecting to %s ", ssid);
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
-	vTaskDelay(500 / portTICK_PERIOD_MS);
+        vTaskDelay(100);
         PRINT(".");
     }
     PRINTLN(" CONNECTED");
 
     if (xTaskCreatePinnedToCore(blink, "blink", 1024, NULL, 1, NULL, 1) != pdPASS)
         PRINTLN("Creating blink tak failed!");
-    
+
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
     char fbox[] = "fritz.box";
     sntp_setservername(0, fbox);
-    //sntp_set_sync_interval(60000);
+    sntp_set_sync_interval((uint32_t) 60000);
     sntp_init();
 
     while (sntp_get_sync_status() != SNTP_SYNC_STATUS_COMPLETED)
-	vTaskDelay(10 / portTICK_PERIOD_MS);
+        vTaskDelay(10);
     int i = 1;
     xQueueSendToBack(timeQueue, (void *) &i, (TickType_t) 0);
 

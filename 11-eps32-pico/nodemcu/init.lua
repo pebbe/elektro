@@ -37,6 +37,11 @@ led_timer:alarm(1000, tmr.ALARM_AUTO, function()
   end
 end)
 
+-- Systeeminfo
+
+print(_VERSION)
+print("Heap: "..node.heap())
+
 -- WiFi
 
 cfg = {}
@@ -94,3 +99,5 @@ time_timer:alarm(20000, tmr.ALARM_AUTO, function()
   local t = time.getlocal()
   print(string.format("%s %d %s %d, %2d:%02d:%02d %s", dag[t["wday"]], t["day"], maand[t["mon"]], t["year"], t["hour"], t["min"], t["sec"], tz[t["dst"]]))
 end)
+
+-- end

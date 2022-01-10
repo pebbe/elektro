@@ -1,64 +1,32 @@
 secret = require("secret")
-cfg = {}
-cfg.ssid = secret.ssid
-cfg.pwd = secret.password
-cfg.auto = false
-cfg.save = false
-wifi.start()
-wifi.mode(wifi.STATION)
-wifi.sta.config(cfg)
-wifi.sta.connect()
 
 dag = { "zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag" }
 maand = { "januari", "februari", "maart", "april", "mei", "juni", "juli", "augustus", "september", "oktober", "november", "december" }
+
 tz = {}
 tz[0] = "CET"
 tz[1] = "CEST"
 tz[-1] = ""
 
 time.settimezone("CET-1CEST,M3.5.0/2,M10.5.0/3")
-wifi.sta.on("connected", function(event, info)
-  time.initntp("fritz.box")
-end)
 
-mytimer = tmr.create()
-mytimer:alarm(20000, tmr.ALARM_AUTO, function()
-  t = time.getlocal()
-  print(string.format("%s %d %s %d, %2d:%02d:%02d %s", dag[t["wday"]], t["day"], maand[t["mon"]], t["year"], t["hour"], t["min"], t["sec"], tz[t["dst"]]))
-
-  m:connect("rpi-zero-2.fritz.box", 1883, 0, function(client)
-    print("connected")
-    -- Calling subscribe/publish only makes sense once the connection
-    -- was successfully established. You can do that either here in the
-    -- 'connect' callback or you need to otherwise make sure the
-    -- connection was established (e.g. tracking connection status or in
-    -- m:on("connect", function)).
-
-    -- subscribe topic with qos = 0
-    client:subscribe("esp32/demo11/#", 0, function(client) print("subscribe success") end)
-    -- publish a message with data = hello, QoS = 0, retain = 0
-    --client:publish("/topic", "hello", 0, 0, function(client) print("sent") end)
-  end,
-  function(client, reason)
-    print("failed reason: " .. reason)
-  end)
-
-end)
+-- LEDs
 
 gpio.config({gpio={25, 26, 27}, dir=gpio.OUT})
-myChannel = ledc.newChannel({
+
+led_channel = ledc.newChannel({
   gpio=27,
   bits=ledc.TIMER_10_BIT,
   mode=ledc.LOW_SPEED,
   timer=ledc.TIMER_0,
   channel=ledc.CHANNEL_0,
   frequency=500,
-  duty=100
+  duty=1023
 });
 
 led_on = false
-mytimer2 = tmr.create()
-mytimer2:alarm(300, tmr.ALARM_AUTO, function()
+led_timer = tmr.create()
+led_timer:alarm(1000, tmr.ALARM_AUTO, function()
   led_on = not led_on
   if led_on then
     gpio.write(25, 1)
@@ -69,36 +37,60 @@ mytimer2:alarm(300, tmr.ALARM_AUTO, function()
   end
 end)
 
--- mytimer2:interval(250)
+-- WiFi
 
--- myChannel:setduty(1023)
+cfg = {}
+cfg.ssid = secret.ssid
+cfg.pwd = secret.password
+cfg.auto = false
+cfg.save = false
+wifi.start()
+wifi.mode(wifi.STATION)
+wifi.sta.config(cfg)
+wifi.sta.on("connected", function(event, info)
+  time.initntp("fritz.box")
+end)
+wifi.sta.connect()
 
-m = mqtt.Client("id11", 120)
-m:on("message", function(client, topic, data)
-  print(topic .. ":" )
-  if data ~= nil then
-    print(data)
+-- MQTT
+
+mqtt_client = mqtt.Client("id11", 120)
+mqtt_client:lwt("esp32/demo11/up", "----", 1, 1)
+mqtt_client:on("connect", function(client)
+  local t = time.getlocal()
+  local s = string.format("%02d-%02d-%04d %02d:%02d:%02d", t["day"], t["mon"], t["year"], t["hour"], t["min"], t["sec"])
+  client:subscribe("esp32/demo11/blink", 1)
+  client:subscribe("esp32/demo11/level", 1)
+  client:publish("esp32/demo11/up",  s, 1, 1)
+end)
+mqtt_client:on("message", function(client, topic, data)
+  local value = tonumber(data)
+  if topic == "esp32/demo11/blink" then
+    if value < 1 then value = 1 end
+    led_timer:interval(value * 100)
+  elseif topic == "esp32/demo11/level" then
+    if value < 0 then value = 0 end
+    if value > 255 then value = 255 end
+    led_channel:setduty(value * 4)
   end
 end)
 
-mytimer3 = tmr.create()
-mytimer3:alarm(2000, tmr.ALARM_SINGLE,
-  function()
-    m:connect("rpi-zero-2.fritz.box", 1883, 0,
-      function(client)
-      	print("connected")
-      	-- Calling subscribe/publish only makes sense once the connection
-      	-- was successfully established. You can do that either here in the
-      	-- 'connect' callback or you need to otherwise make sure the
-      	-- connection was established (e.g. tracking connection status or in
-      	-- m:on("connect", function)).
+-- wacht tot time() de juiste tijd geeft voordat MQTT gestart wordt
 
-      	-- subscribe topic with qos = 0
-      	client:subscribe("esp32/demo11/#", 0, function(client) print("subscribe success") end)
-      	-- publish a message with data = hello, QoS = 0, retain = 0
-      	--client:publish("/topic", "hello", 0, 0, function(client) print("sent") end)
-      end,
-      function(client, reason)
-        print("failed reason: " .. reason)
-      end)
-  end)
+setup_timer = tmr.create()
+setup_timer:alarm(100, tmr.ALARM_SEMI, function()
+  if time.get() > 100000000 then
+    mqtt_client:connect("rpi-zero-2.fritz.box", 1883)
+    setup_timer:unregister()
+  else
+    setup_timer:start()
+  end
+end)
+
+-- local time
+
+time_timer = tmr.create()
+time_timer:alarm(20000, tmr.ALARM_AUTO, function()
+  local t = time.getlocal()
+  print(string.format("%s %d %s %d, %2d:%02d:%02d %s", dag[t["wday"]], t["day"], maand[t["mon"]], t["year"], t["hour"], t["min"], t["sec"], tz[t["dst"]]))
+end)

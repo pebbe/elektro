@@ -1,3 +1,5 @@
+-- init.lua
+
 secret = require("secret")
 
 dag = { "zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag" }
@@ -59,28 +61,32 @@ wifi.sta.connect()
 
 -- MQTT
 
+topic_up = "esp32/demo11/up"
+topic_blink = "esp32/demo11/blink"
+topic_level = "esp32/demo11/level"
+
 mqtt_client = mqtt.Client("id11", 120)
-mqtt_client:lwt("esp32/demo11/up", "----", 1, 1)
+mqtt_client:lwt(topic_up, "----", 1, 1)
 mqtt_client:on("connect", function(client)
   local t = time.getlocal()
   local s = string.format("%02d-%02d-%04d %02d:%02d:%02d", t["day"], t["mon"], t["year"], t["hour"], t["min"], t["sec"])
-  client:subscribe("esp32/demo11/blink", 1)
-  client:subscribe("esp32/demo11/level", 1)
-  client:publish("esp32/demo11/up", s, 1, 1)
+  client:subscribe(topic_blink, 1)
+  client:subscribe(topic_level, 1)
+  client:publish(topic_up, s, 1, 1)
 end)
 mqtt_client:on("message", function(client, topic, data)
   local value = tonumber(data)
-  if topic == "esp32/demo11/blink" then
+  if topic == topic_blink then
     if value < 1 then value = 1 end
     led_timer:interval(value * 100)
-  elseif topic == "esp32/demo11/level" then
+  elseif topic == topic_level then
     if value < 0 then value = 0 end
     if value > 255 then value = 255 end
     led_channel:setduty(value * 4)
   end
 end)
 
--- wacht tot time() de juiste tijd geeft voordat MQTT gestart wordt
+-- wacht tot time.get() de juiste tijd geeft voordat MQTT gestart wordt
 
 setup_timer = tmr.create()
 setup_timer:alarm(100, tmr.ALARM_SEMI, function()

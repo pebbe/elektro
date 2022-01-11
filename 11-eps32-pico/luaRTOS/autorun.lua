@@ -11,6 +11,13 @@ print("Speed: "..cpu.speed().." MHz")
 print("Temp: "..cpu.temperature().." ^C")
 print("")
 
+thread.start(function()
+  while true do
+    print(time.longtime())
+    tmr.sleep(20)
+  end
+end)
+
 -- blink ----------
 
 pio.pin.setdir(pio.OUTPUT, pio.GPIO25)
@@ -80,12 +87,5 @@ while true do
     break
   end
   tmr.sleepms(100)
-end
-
--- keep running ----------
-
-while true do
-  print(time.longtime())
-  tmr.sleep(20)
 end
 

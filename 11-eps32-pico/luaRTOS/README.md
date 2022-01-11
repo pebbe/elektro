@@ -30,7 +30,6 @@ Let op:
 
  * `tmr.delay()` blokkeert in eigen thread
  * `tmr.sleep()` geeft tijd aan andere threads
- * als `autorun.lua` het einde bereikt worden alle threads gestopt
 
 Beperkingen:
 

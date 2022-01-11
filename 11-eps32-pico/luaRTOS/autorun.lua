@@ -1,8 +1,6 @@
-time = require("time")
+-- autorun.lua
 
-topic_up = "esp32/demo11/up"
-topic_blink = "esp32/demo11/blink"
-topic_level = "esp32/demo11/level"
+time = require("time")
 
 -- system info ----------
 
@@ -17,6 +15,7 @@ print("")
 
 pio.pin.setdir(pio.OUTPUT, pio.GPIO25)
 pio.pin.setdir(pio.OUTPUT, pio.GPIO26)
+
 led_on = false
 function blink()
   led_on = not led_on
@@ -29,7 +28,7 @@ function blink()
   end
 end
 
-t0 = tmr.attach(500, blink)
+t0 = tmr.attach(1000, blink)
 t0:start()
 
 -- PWM ----------
@@ -38,6 +37,10 @@ led = pwm.attach(pio.GPIO27, 5000, .5)
 led:start()
 
 -- MQTT ----------
+
+topic_up = "esp32/demo11/up"
+topic_blink = "esp32/demo11/blink"
+topic_level = "esp32/demo11/level"
 
 function handler(len, message, topic_len, topic_name)
   print("MQTT: "..topic_name.."="..message)
@@ -60,7 +63,6 @@ function handler(len, message, topic_len, topic_name)
   end
 end
 
--- lwt niet geïmplementeerd!
 client = mqtt.client("id11", "rpi-zero-2.fritz.box", 1883, false, nil, true)
 client:connect("","")
 while true do
@@ -72,6 +74,7 @@ end
 client:subscribe(topic_blink, mqtt.QOS1, handler)
 client:subscribe(topic_level, mqtt.QOS1, handler)
 while true do
+  -- wacht tot juiste tijd van NTP beschikbaar is
   if os.time() > 1641911053 then
     client:publish(topic_up, time.shorttime(), mqtt.QOS1, true)
     break
@@ -85,3 +88,4 @@ while true do
   print(time.longtime())
   tmr.sleep(20)
 end
+

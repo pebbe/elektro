@@ -18,7 +18,7 @@ mkdir tmp
 
 Let op:
 
-Je kunt wcc niet gebruiken als een ander programma (zoals een monitor)
+Je kunt `wcc` niet gebruiken als een ander programma (zoals een monitor)
 verbonden is aan de poort.
 
 
@@ -28,6 +28,11 @@ https://github.com/whitecatboard/Lua-RTOS-ESP32/wiki/Firmware-Espressif-Systems-
 
 Let op:
 
- * `tmr.delay()` blokkeert in deze thread
+ * `tmr.delay()` blokkeert in eigen thread
  * `tmr.sleep()` geeft tijd aan andere threads
+ * als `autorun.lua` het einde bereikt worden alle threads gestopt
 
+Beperkingen:
+
+ * mqtt zonder last will & testament
+ * geen tijdzones

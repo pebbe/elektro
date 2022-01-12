@@ -1,7 +1,7 @@
 
 https://nodemcu.readthedocs.io/en/dev-esp32/
 
-## Installatie
+## Installatie van firmware
 
 zie: https://nodemcu.readthedocs.io/en/dev-esp32/build/
 
@@ -15,6 +15,12 @@ pip install -r sdk/esp32-esp-idf/requirements.txt
 make menuconfig
 make
 make flash
+```
+
+Zie ook:
+
+```
+make help
 ```
 
 Zie welke modules je hebt gekozen:

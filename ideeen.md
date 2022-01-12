@@ -22,6 +22,10 @@ Toepassingen
 
  * RGB-diode: flakkerkaars
 
+Hulpmiddelen
+
+ * [Logic Level Converter](https://www.okaphone.com/artikelen.asp?groep=1467) voor 5V display of senseo met 3,3V controller
+
 Technieken
 
  * [I²C protocol](https://en.wikipedia.org/wiki/I%C2%B2C)

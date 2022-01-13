@@ -20,10 +20,11 @@ filesystem:
 libs:
   - location: https://github.com/mongoose-os-libs/boards
   - location: https://github.com/mongoose-os-libs/js-demo-bundle
+  - location: https://github.com/mongoose-os-libs/pwm
 
 conds:
   - when: mos.platform == "esp32"
     apply:
       build_vars:
-        # Icrease app szie for ESP32
+        # Icrease app size for ESP32
         APP_SLOT_SIZE: 0x190000

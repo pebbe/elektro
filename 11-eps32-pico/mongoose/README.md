@@ -38,9 +38,9 @@ getallen. Je kunt niet de inhoud van twee string-variabelen met
 elkaar vergelijken. De implementatie van subscribe in MQTT geeft als
 message een string zonder einde: blijkbaar verwacht de library dat de
 string met een nul-byte aan het einde verzonden worden. Als het een
-getal is verzonden als string is er geen moeglijkheid de ontvangen
+getal is verzonden als string is er geen mogelijkheid de ontvangen
 data weer om te zetten naar een getal.
 
 Je kunt ook in C/C++ werken, maar dan moet je na elke bewerking de
-boel op de server laten compileren, en het resultaten flashen. Dan kun
+boel op de server laten compileren, en het resultaat flashen. Dan kun
 je beter gewoon ArduinoIDE of Espressif gebruiken.

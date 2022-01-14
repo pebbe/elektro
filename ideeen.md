@@ -8,6 +8,7 @@
      * [hackaday /tag/circuit-sculpture](https://hackaday.com/tag/circuit-sculpture/)
      * [instructables /art/projects](https://www.instructables.com/circuits/art/projects/)
  * Nestkastje met camera
+ * Groot display van e-paper met roulerende afbeeldingen (van flickr?), foto zwart/wit-geditterd
 
 ## Elektronica zonder controllers
 

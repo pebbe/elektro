@@ -181,7 +181,7 @@ void setup()
     PRINTLN(" CONNECTED");
 
     if (xTaskCreatePinnedToCore(blink, "blink", 1024, NULL, 1, NULL, 1) != pdPASS)
-        PRINTLN("Creating blink tak failed!");
+        PRINTLN("Creating blink task failed!");
 
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
     char fbox[] = "fritz.box";

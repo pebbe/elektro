@@ -14,7 +14,6 @@
  
 ### Library's
  * [NTPClient](https://github.com/arduino-libraries/NTPClient)
- * [ESP32 AnalogWrite](https://github.com/ERROPiX/ESP32_AnalogWrite)
  * [PubSubClient](https://pubsubclient.knolleary.net/)
 
 ```

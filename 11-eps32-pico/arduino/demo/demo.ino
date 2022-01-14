@@ -19,7 +19,6 @@
 #include <WiFiUdp.h>
 #include <NTPClient.h>
 #include <PubSubClient.h>
-#include <analogWrite.h>
 #include <time.h>
 #include "secret.h"
 
@@ -89,6 +88,7 @@ void setup()
         PRINT(".");
     }
     PRINTLN(" CONNECTED");
+    delay(500);
 
     setenv("TZ", "CET-1CEST,M3.5.0/2,M10.5.0/3", 1);
     timeClient.begin();
@@ -101,6 +101,7 @@ void setup()
     struct tm* t = localtime(&now);
     char s[100];
     sprintf(s, "%02d-%02d-%04d %02d:%02d:%02d", t->tm_mday, t->tm_mon+1, 1900 + t->tm_year, t->tm_hour, t->tm_min, t->tm_sec);
+    delay(500);
     mqttClient.publish(topic, s, true);
     mqttClient.subscribe("esp32/demo11/blink");
     mqttClient.subscribe("esp32/demo11/level");
@@ -135,7 +136,6 @@ void loop()
     if (ledLevel != ledLevelNow) {
         ledLevelNow = ledLevel;
         analogWrite(LEDYELLOW, ledLevel);
-        // voor native zie: https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/peripherals/ledc.html
     }
 
     delay(100);

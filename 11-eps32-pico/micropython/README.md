@@ -1,7 +1,7 @@
 
 
-
- * [MicroPython Tutorial](https://www.youtube.com/playlist?list=PL6F17pWypPy_KSmpnR5CV8x78QhAiKBIl)
+ * [MicroPython documentation](https://docs.micropython.org/en/latest/)
+ * [MicroPython Tutorial](https://www.youtube.com/playlist?list=PL6F17pWypPy_KSmpnR5CV8x78QhAiKBIl) (Youtube)
 
 ## Install
 

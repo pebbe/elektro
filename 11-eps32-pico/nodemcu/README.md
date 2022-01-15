@@ -32,7 +32,6 @@ grep 'CONFIG_NODEMCU_CMODULE.*=y' sdkconfig
 ## Tools
 
  * [nodemcu-tool](https://www.npmjs.com/package/nodemcu-tool) — terminal, upload/download bestanden
- * [ChiliPeppr](http://chilipeppr.com/esp32) — web-interface
 
 In de directory van je project, zet defaults voor poort en baudrate:
 

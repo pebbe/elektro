@@ -42,6 +42,7 @@ Soorten controllers
 ## Ontwikkeling
 
  * FreeRTOS op de EPS32
+ * [RIOT OS](https://www.riot-os.org/)
  * [PlatformIO](https://docs.platformio.org/en/latest/integration/ide/vscode.html)
 
 ## Vaardigheden

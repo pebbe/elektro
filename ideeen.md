@@ -25,7 +25,7 @@ Toepassingen
 
 Hulpmiddelen
 
- * [Logic Level Converter](https://www.okaphone.com/artikelen.asp?groep=1467) voor 5V display of senseo met 3,3V controller
+ * [Logic Level Converter](https://www.okaphone.com/artikelen.asp?groep=1467) voor 5V display of sensor met 3,3V controller
 
 Technieken
 

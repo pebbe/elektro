@@ -352,7 +352,7 @@ void doSun(int n) {
         opt = day ? 3 : 4;
         s = format(t2 - now);
     }
-    u8g2.setContrast(day ? 100 : 20); // 0..255
+    u8g2.setContrast(day ? 100 : 0); // 0..255
     draw(s.c_str(), opt);
     PRINTLN(s);
 }

@@ -56,7 +56,7 @@ Soorten controllers
 
 ## Server
 
- * Raspberry Pi 4 B met Mosquitto, InfluxDB en Grafana
+ * Raspberry Pi 4 B met Mosquitto, InfluxDB, Grafana, dag- en nachttijden
 
 ## Weer/lucht sensors
 
@@ -82,19 +82,27 @@ Toepassingen:
 
 ## Remote
 
+https://hackaday.com/2016/05/05/which-wireless-tech-is-right-for-you/
+
  * Wifi
  * Bluetooth
+ * BLE
  * Infrarood
      * Tester voor afstandsbediening
- * Lorawan
+ * LoRa
+ * LoRaWAN
+ * ZigBee
+ * Z-Wave
  * RX/TX op 433Mhz
      * [zend en ontvangstmodule](https://www.okaphone.com/artikel.asp?id=488915)
  * RF24
      * [video: nRF24L01 Send (and receive) data with your Arduino](https://www.youtube.com/watch?v=JSHJ-RLbNJk)
      * [module voor RF communicatie](https://www.okaphone.com/artikel.asp?id=483444)
      * [draadloze transciever module](https://www.okaphone.com/artikel.asp?id=487118)
-     * [Adapter Module](https://www.okaphone.com/artikel.asp?id=491642) — Een module om de NRF24L01+ aan te sluiten op een 5 volt microcontroller.
+     * [Adapter Module](https://www.okaphone.com/artikel.asp?id=491642) — een module om de NRF24L01+ aan te sluiten op een 5 volt microcontroller
  * [DCF77 tijdsignaal](https://nl.wikipedia.org/wiki/DCF77)
+ * RFID
+ * NFC
 
 
 ## Bouwpakketten

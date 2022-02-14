@@ -267,6 +267,10 @@ void app_main(void)
     }
     ESP_ERROR_CHECK(ret);
 
+    printf("==============\n");
+    printf("espressif/demo\n");
+    printf("==============\n");
+
     // Print some info
     esp_chip_info_t chip_info;
     esp_chip_info(&chip_info);

@@ -56,6 +56,12 @@ def sub_cb(topic, msg):
         blink_steps = value
         blink_step = 0
 
+sys.stdout.write('''
+================
+micropython/demo
+================
+''')
+
 sys.stdout.write(uos.uname().machine + ' / ' + uos.uname().version + '\n')
 
 led_red = machine.Pin(25, machine.Pin.OUT)

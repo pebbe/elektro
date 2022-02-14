@@ -4,6 +4,10 @@ time = require("time")
 
 -- system info ----------
 
+print("============")
+print("luartos/demo")
+print("============")
+
 print("")
 print("CPU: "..cpu.model())
 print("Board: "..cpu.board())

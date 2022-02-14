@@ -41,6 +41,10 @@ end)
 
 -- Systeeminfo
 
+print('============')
+print('nodemcu/demo')
+print('============')
+
 print(_VERSION)
 print("Heap: "..node.heap())
 

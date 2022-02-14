@@ -60,6 +60,9 @@ let t1 = Timer.set(10, Timer.REPEAT, function() {
   }
 }, null);
 
+Log.info('===============')
+Log.info('mongooseos/demo')
+Log.info('===============')
 
 // Print time each 20 sec
 

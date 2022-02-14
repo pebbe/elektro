@@ -20,3 +20,10 @@ esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash -z 0x1000 esp32-*.bin
 ## Command line access + REPL
 
  * [rshell](https://github.com/dhylands/rshell)
+
+In rshell:
+
+```sh
+cp *.py /pyboard
+repl             # exit: Ctrl-X
+```

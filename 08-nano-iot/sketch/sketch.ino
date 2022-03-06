@@ -34,7 +34,7 @@ int status = WL_IDLE_STATUS;
 char server[] = "pkleiweg.home.xs4all.nl";
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "fritz.box");  // fritz.box  ntp.xs4all.nl  nl.pool.ntp.org
+NTPClient timeClient(ntpUDP, "fritz.box");  // fritz.box  nl.pool.ntp.org
 
 WiFiSSLClient client;
 

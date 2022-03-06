@@ -1,5 +1,6 @@
 # Ideeën
 
+ * Kleurfilter voor OLED-display
  * Houtbouw
  * Diorama
      * [Magic Picture of Storm at Sea](https://www.hackster.io/lincolnstein/magic-picture-of-storm-at-sea-ce0d47)

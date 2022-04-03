@@ -1,5 +1,8 @@
 # Ideeën
 
+ * Een gezicht dat je blijft aankijken
+     * object-herkenning
+     * twee OLED-displays als ogen
  * Kleurfilter voor OLED-display
  * Houtbouw
  * Diorama
@@ -104,6 +107,7 @@ https://hackaday.com/2016/05/05/which-wireless-tech-is-right-for-you/
  * [DCF77 tijdsignaal](https://nl.wikipedia.org/wiki/DCF77)
  * RFID
  * NFC
+ * [ESP-NOW](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/network/esp_now.html)
 
 
 ## Bouwpakketten

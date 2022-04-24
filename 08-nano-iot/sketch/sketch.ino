@@ -31,12 +31,13 @@ char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 
 int status = WL_IDLE_STATUS;
-char server[] = "pkleiweg.home.xs4all.nl";
+char server[] = "192.168.178.29"; // raspi
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "fritz.box");  // fritz.box  nl.pool.ntp.org
 
-WiFiSSLClient client;
+//WiFiSSLClient client;
+WiFiClient client;
 
 WiFiClient plainClient;
 
@@ -390,7 +391,7 @@ bool getSun() {
     draw("?zon");
     PRINT("Starting connection to server ");
     PRINTLN(server);
-    if (!client.connect(server, 443)) {
+    if (!client.connect(server, 80)) {
         draw("*zon");
         PRINTLN("Connecting failed");
         backoffSun();
@@ -398,8 +399,8 @@ bool getSun() {
     }
 
     PRINTLN("connected to server");
-    client.println("GET /data/sun.txt HTTP/1.1");
-    client.println("Host: pkleiweg.home.xs4all.nl");
+    client.println("GET /user/sun.txt HTTP/1.1");
+    client.println("Host: 192.168.178.29");
     client.println("Connection: close");
     client.println();
 

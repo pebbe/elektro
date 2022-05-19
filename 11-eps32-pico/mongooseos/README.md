@@ -20,7 +20,7 @@ mos wifi SSID PASSWORD
 mos config-set \
   mqtt.enable=true \
   mqtt.max_qos=1 \
-  mqtt.server=rpi-zero-2.fritz.box:1883 \
+  mqtt.server=192.168.178.24:1883 \
   mqtt.will_message=---- \
   mqtt.will_retain=true \
   mqtt.will_topic=esp32/demo11/up \

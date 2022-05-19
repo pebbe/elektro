@@ -31,13 +31,13 @@ char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 
 int status = WL_IDLE_STATUS;
-char server[] = "192.168.178.29"; // raspi
+char server[] = "bisse.nl";
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "fritz.box");  // fritz.box  nl.pool.ntp.org
+NTPClient timeClient(ntpUDP, "nl.pool.ntp.org");  // fritz.box  nl.pool.ntp.org
 
-//WiFiSSLClient client;
-WiFiClient client;
+WiFiSSLClient client;
+//WiFiClient client;
 
 WiFiClient plainClient;
 
@@ -179,7 +179,7 @@ void setup() {
 #endif
 
 
-    mqttClient.setServer("192.168.178.29", 1883);
+    mqttClient.setServer("192.168.178.24", 1883);
 }
 
 bool mqttConnect() {
@@ -391,7 +391,7 @@ bool getSun() {
     draw("?zon");
     PRINT("Starting connection to server ");
     PRINTLN(server);
-    if (!client.connect(server, 80)) {
+    if (!client.connect(server, 443)) {
         draw("*zon");
         PRINTLN("Connecting failed");
         backoffSun();
@@ -399,8 +399,8 @@ bool getSun() {
     }
 
     PRINTLN("connected to server");
-    client.println("GET /user/sun.txt HTTP/1.1");
-    client.println("Host: 192.168.178.29");
+    client.println("GET /data/sun.txt HTTP/1.1");
+    client.println("Host: bisse.nl");
     client.println("Connection: close");
     client.println();
 

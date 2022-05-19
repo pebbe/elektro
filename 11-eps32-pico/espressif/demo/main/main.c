@@ -210,7 +210,7 @@ static void mqtt_event_data(void *handler_args, esp_event_base_t base, int32_t e
 
 void mqtt_start(void) {
     esp_mqtt_client_config_t mqtt_cfg = {
-                                         .uri = "mqtt://rpi-zero-2.fritz.box:1883",
+                                         .uri = "mqtt://192.168.178.24:1883",
                                          .lwt_topic = TOPIC_UP,
                                          .lwt_msg = "----",
                                          .lwt_qos = 1,
@@ -301,7 +301,7 @@ void app_main(void)
     tzset();
 
     sntp_setoperatingmode(SNTP_OPMODE_POLL);
-    sntp_setservername(0, "fritz.box");
+    sntp_setservername(0, "nl.pool.ntp.org");
     sntp_set_sync_interval(60000);
     sntp_init();
 

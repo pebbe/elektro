@@ -103,7 +103,7 @@ static void mqtt_event_data(void *handler_args, esp_event_base_t base, int32_t e
 
 esp_mqtt_client_config_t mqtt_cfg;
 void mqtt_start(void) {
-    mqtt_cfg.uri = "mqtt://rpi-zero-2.fritz.box:1883";
+    mqtt_cfg.uri = "mqtt://192.168.178.24:1883";
     mqtt_cfg.lwt_topic = TOPIC_UP;
     mqtt_cfg.lwt_msg = "----";
     mqtt_cfg.lwt_qos = 1;

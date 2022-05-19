@@ -5,6 +5,7 @@
      * twee OLED-displays als ogen
  * Kleurfilter voor OLED-display
  * Houtbouw
+     * reactie op beweging: PIR
  * Diorama
      * [Magic Picture of Storm at Sea](https://www.hackster.io/lincolnstein/magic-picture-of-storm-at-sea-ce0d47)
  * Figuratief
@@ -105,6 +106,10 @@ https://hackaday.com/2016/05/05/which-wireless-tech-is-right-for-you/
      * [draadloze transciever module](https://www.okaphone.com/artikel.asp?id=487118)
      * [Adapter Module](https://www.okaphone.com/artikel.asp?id=491642) — een module om de NRF24L01+ aan te sluiten op een 5 volt microcontroller
  * [DCF77 tijdsignaal](https://nl.wikipedia.org/wiki/DCF77)
+     * https://dcf77logs.de
+     * [Arduino](https://www.arduino.cc/reference/en/libraries/dcf77/)
+     * [amazon.nl: DCF 77 module ontvanger](https://www.amazon.nl/dp/B014I7VUS6/)
+     * https://www.youtube.com/watch?v=6SHGAEhnsYk
  * RFID
  * NFC
  * [ESP-NOW](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/network/esp_now.html)

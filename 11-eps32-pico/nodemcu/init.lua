@@ -95,7 +95,7 @@ end)
 setup_timer = tmr.create()
 setup_timer:alarm(100, tmr.ALARM_SEMI, function()
   if time.get() > 100000000 then
-    mqtt_client:connect("rpi-zero-2.fritz.box", 1883)
+    mqtt_client:connect("192.168.178.24", 1883)
     setup_timer:unregister()
   else
     setup_timer:start()

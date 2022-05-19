@@ -35,7 +35,7 @@ void callback(char* topic, byte* payload, unsigned int length);
 char const *flashmode(FlashMode_t mode);
 
 WiFiClient plainClient;
-const char *server = "rpi-zero-2.fritz.box";
+const char *server = "192.168.178.24";
 PubSubClient mqttClient(server, 1883, callback, plainClient);
 
 int blinkStep = 1;

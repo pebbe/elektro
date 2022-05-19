@@ -74,7 +74,7 @@ function handler(len, message, topic_len, topic_name)
   end
 end
 
-client = mqtt.client("id11", "rpi-zero-2.fritz.box", 1883, false, nil, true)
+client = mqtt.client("id11", "192.168.178.24", 1883, false, nil, true)
 client:connect("","")
 while true do
   if client:connected() then

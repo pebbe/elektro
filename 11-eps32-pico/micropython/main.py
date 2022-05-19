@@ -87,7 +87,7 @@ ntptime.host = 'fritz.box'
 ntptime.settime()
 _thread.start_new_thread(timer, ())
 
-client = MQTTClient('id11', 'rpi-zero-2.fritz.box', port=1883)
+client = MQTTClient('id11', '192.168.178.24', port=1883)
 client.set_last_will(topic_up, '----', retain=True, qos=1)
 client.set_callback(sub_cb)
 client.connect()

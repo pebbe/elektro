@@ -1,8 +1,15 @@
 # Ideeën
 
+ * Nachtlicht
+     * [PIR Bewegingssensor](https://www.okaphone.com/artikel.asp?id=484591)
+     * [Lichtsensor](https://www.okaphone.com/artikel.asp?id=473036)
+     * Relais, als licht van een LED niet voldoende is
+     * [Meer modules...](https://www.okaphone.com/groep.asp?id=1179)
  * Een gezicht dat je blijft aankijken
      * object-herkenning
-     * twee OLED-displays als ogen
+     * twee ronde displays als ogen: GC9A01 IPS Display
+         * https://www.youtube.com/watch?v=k2c2zCmC_X0
+         * https://www.waveshare.com/wiki/1.28inch_LCD_Module
  * Kleurfilter voor OLED-display
  * Houtbouw
      * reactie op beweging: PIR

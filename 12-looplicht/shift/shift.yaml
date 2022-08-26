@@ -1,0 +1,5 @@
+profile:
+  attinyx5micr:
+    fqbn: ATTinyCore:avr:attinyx5micr
+    platforms:
+      - platform: ATTinyCore:avr (1.5.2)

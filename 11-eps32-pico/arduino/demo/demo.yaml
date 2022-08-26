@@ -1,0 +1,8 @@
+profile:
+  pico32:
+    fqbn: espressif:esp32:pico32
+    platforms:
+      - platform: espressif:esp32 (2.0.4)
+    libraries:
+      - NTPClient (3.2.1)
+      - PubSubClient (2.8)

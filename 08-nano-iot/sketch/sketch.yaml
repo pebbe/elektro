@@ -1,0 +1,11 @@
+profile:
+  nano_33_iot:
+    fqbn: arduino:samd:nano_33_iot
+    platforms:
+      - platform: arduino:samd (1.8.13)
+    libraries:
+      - WiFiNINA (1.8.13)
+      - NTPClient (3.2.1)
+      - PubSubClient (2.8)
+      - BME280 (3.0.0)
+      - U8g2 (2.32.15)

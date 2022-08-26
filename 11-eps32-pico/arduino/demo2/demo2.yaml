@@ -1,0 +1,5 @@
+profile:
+  pico32:
+    fqbn: espressif:esp32:pico32
+    platforms:
+      - platform: espressif:esp32 (2.0.4)

@@ -34,7 +34,7 @@ int status = WL_IDLE_STATUS;
 char server[] = "bisse.nl";
 
 WiFiUDP ntpUDP;
-NTPClient timeClient(ntpUDP, "nl.pool.ntp.org");  // fritz.box  nl.pool.ntp.org
+NTPClient timeClient(ntpUDP, "192.168.178.24");  // 192.168.178.24 (bisse) ,  ntp.time.nl ,  nl.pool.ntp.org
 
 WiFiSSLClient client;
 //WiFiClient client;

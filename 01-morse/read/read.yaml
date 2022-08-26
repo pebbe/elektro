@@ -1,0 +1,5 @@
+profile:
+  nano:
+    fqbn: arduino:avr:nano
+    platforms:
+      - platform: arduino:avr (1.8.5)

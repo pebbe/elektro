@@ -1,3 +1,3 @@
 Mijn hobby: Elektronica
 
-Ook op [Tumblr](https://pebbe.tumblr.com/tagged/elektro)
+Ook op [bisse](https://bisse.nl/blog/categories/elektro/)

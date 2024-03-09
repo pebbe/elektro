@@ -31,12 +31,12 @@ char ssid[] = SECRET_SSID;
 char pass[] = SECRET_PASS;
 
 int status = WL_IDLE_STATUS;
-char server[] = "bisse.nl";
+char server[] = "192.168.178.24"; // "bisse.nl";
 
 WiFiUDP ntpUDP;
 NTPClient timeClient(ntpUDP, "192.168.178.24");  // 192.168.178.24 (bisse) ,  ntp.time.nl ,  nl.pool.ntp.org
 
-WiFiSSLClient client;
+//WiFiSSLClient client;
 //WiFiClient client;
 
 WiFiClient plainClient;
@@ -391,7 +391,7 @@ bool getSun() {
     draw("?zon");
     PRINT("Starting connection to server ");
     PRINTLN(server);
-    if (!client.connect(server, 443)) {
+    if (!plainClient.connect(server, 80)) {
         draw("*zon");
         PRINTLN("Connecting failed");
         backoffSun();
@@ -399,16 +399,16 @@ bool getSun() {
     }
 
     PRINTLN("connected to server");
-    client.println("GET /data/sun.txt HTTP/1.1");
-    client.println("Host: bisse.nl");
-    client.println("Connection: close");
-    client.println();
+    plainClient.println("GET /sun.txt HTTP/1.1");
+    plainClient.println("Host: data.bisse.nl");
+    plainClient.println("Connection: close");
+    plainClient.println();
 
     delay(1000);
     String s;
     int nl = 0;
-    while (client.available()) {
-        char c = client.read();
+    while (plainClient.available()) {
+        char c = plainClient.read();
         if (nl < 2) {
             if (c == '\n') {
                 nl++;
@@ -426,9 +426,9 @@ bool getSun() {
     PRINT("Data size: ");
     PRINTLN(s.length());
 
-    if (!client.connected()) {
+    if (!plainClient.connected()) {
         PRINTLN("disconnecting from server");
-        client.stop();
+        plainClient.stop();
     }
 
     if (s.length() < 260) {

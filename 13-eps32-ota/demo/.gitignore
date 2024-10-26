@@ -1,0 +1,6 @@
+.cache/
+.devcontainer/
+.vscode/
+build/
+server_certs/
+sdkconfig.old

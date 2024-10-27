@@ -18,6 +18,7 @@ idf.py monitor
  * [ESP32 API Reference](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/)
  * [ESP32-PICO-KIT V4 / V4.1 Getting Started Guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/hw-reference/esp32/get-started-pico-kit.html)
  * [OTA Example](https://github.com/espressif/esp-idf/tree/v5.3.1/examples/system/ota)
+ * [ESP32 Arduino](https://docs.espressif.com/projects/arduino-esp32/en/latest/)
 
 ## Tutorials
 

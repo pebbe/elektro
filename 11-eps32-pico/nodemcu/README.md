@@ -1,39 +1,18 @@
 
-https://nodemcu.readthedocs.io/en/dev-esp32/
-
-## Installatie van firmware
-
-zie: https://nodemcu.readthedocs.io/en/dev-esp32/build/
-
-Gebruik een virtuele environment voor Python 2
-
-```sh
-git clone --branch dev-esp32 --recurse-submodules https://github.com/nodemcu/nodemcu-firmware.git nodemcu-firmware-esp32
-cd nodemcu-firmware-esp32
-pip install Pyserial
-pip install -r sdk/esp32-esp-idf/requirements.txt
-make menuconfig
-make
-make flash
-```
-
-Zie ook:
+## Firmware installeren
 
 ```
-make help
-```
-
-Zie welke modules je hebt gekozen:
-
-```
+cd .../nodemcu-firmware-esp32
+make menuconfig    # Component config -> NodeMCU modules
+# zie selectie van modules:
 grep 'CONFIG_NODEMCU_CMODULE.*=y' sdkconfig
+make
+idf.py -p /dev/ttyUSB0 flash
 ```
 
-## Tools
+## Upload script
 
- * [nodemcu-tool](https://www.npmjs.com/package/nodemcu-tool) — terminal, upload/download bestanden
-
-In de directory van je project, zet defaults voor poort en baudrate:
+Zet defaults voor poort en baudrate:
 
 ```
 nodemcu-tool init
@@ -50,3 +29,10 @@ Open terminal:
 ```
 nodemcu-tool terminal
 ```
+
+
+Meer tools voor uploaden van script:
+
+https://nodemcu.readthedocs.io/en/release/upload/
+
+NodeMCU-Tool is de enige tool die lijkt te werken.
